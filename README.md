@@ -1,5 +1,5 @@
 # Java-Rest-Servlet
-A simple Java Library for creating REST web services using java servlets
+A simple Java Library for creating CRUD REST web services using java servlets
 
 [JAR file](./RESTServlet/dist)
 
