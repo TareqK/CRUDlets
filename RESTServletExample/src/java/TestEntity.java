@@ -26,12 +26,12 @@ public class TestEntity extends RESTServletEntity {
 
     @Override
     public JSONObject create(JSONObject obj) {
-    return obj;   
+    return null;   
     }
 
     @Override
     public JSONObject update(JSONObject obj, String query) {
-    return obj;    
+    return null;    
     }
 
     @Override

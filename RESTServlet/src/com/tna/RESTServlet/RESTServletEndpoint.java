@@ -7,6 +7,8 @@ package com.tna.RESTServlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -23,19 +25,25 @@ public abstract class RESTServletEndpoint extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("application/json;charset=UTF-8");
-        JSONObject obj;
+        JSONObject obj = null;
         try {
-            String query = URLParser.parse(request);
-            if (query == null) {
+            String resource = RESTServletURLParser.parse(request);
+            if (resource == null) {
                 obj = doList();
             } else {
-                obj = doRead(query);
+                obj = doRead(resource);
             }
-        } catch (URLParser.URIParseError e) {
+        } catch (RESTServletURLParser.RESTServletURLParseError e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);//send a bad request
             return;
         }
         try (PrintWriter printWriter = response.getWriter()) {
+            if(obj== null){
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);//send a bad request
+                 return;
+            }else{
             printWriter.print(obj);
+            }
         }
 
     }
@@ -44,7 +52,12 @@ public abstract class RESTServletEndpoint extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("application/json;charset=UTF-8");
-        JSONObject obj = doCreate(RequestParser.parseRequest(request));
+        JSONObject obj = null;
+        try {
+            obj = doCreate(RESTServletRequestParser.parseRequest(request));
+        } catch (RESTServletRequestParser.RESTServletRequestError ex) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);//send a bad request
+        }
         try (PrintWriter printWriter = response.getWriter()) {
             printWriter.print(obj);
         }
@@ -55,19 +68,26 @@ public abstract class RESTServletEndpoint extends HttpServlet {
     protected void doPut(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("application/json;charset=UTF-8");
-        JSONObject obj;
+        JSONObject obj = null;
         try {
-            String query = URLParser.parse(request);
-            if (query == null) {
+            String resource = RESTServletURLParser.parse(request);
+            if (resource == null) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST);//send a bad request
                 return;
             } else {
-                obj = doUpdate(RequestParser.parseRequest(request), query);
+                obj = doUpdate(RESTServletRequestParser.parseRequest(request), resource);
             }
-        } catch (URLParser.URIParseError e) {
+        } catch (RESTServletURLParser.RESTServletURLParseError | RESTServletRequestParser.RESTServletRequestError e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);//send a bad request
             return;
         }
         try (PrintWriter printWriter = response.getWriter()) {
-            printWriter.print(obj);
+            if(obj== null){
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);//send a bad request
+                return;
+            }else{
+                printWriter.print(obj);
+            }
         }
 
     }
@@ -78,13 +98,14 @@ public abstract class RESTServletEndpoint extends HttpServlet {
         response.setContentType("application/json;charset=UTF-8");
         JSONObject obj;
         try {
-            String query = URLParser.parse(request);
-            if (query == null) {
+            String resource = RESTServletURLParser.parse(request);
+            if (resource == null) {
                 return;
             } else {
-                obj = doDelete(query);
+                obj = doDelete(resource);
             }
-        } catch (URLParser.URIParseError e) {
+        } catch (RESTServletURLParser.RESTServletURLParseError e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);//send a bad request
             return;
         }
         try (PrintWriter printWriter = response.getWriter()) {
@@ -94,7 +115,7 @@ public abstract class RESTServletEndpoint extends HttpServlet {
 
     @Override
     public String getServletInfo() {
-        return "A simple API framework";
+        return null;
     }// </editor-fold>
 
     /**
@@ -113,24 +134,24 @@ public abstract class RESTServletEndpoint extends HttpServlet {
     /**
      *
      * @param obj
-     * @param query
+     * @param resource
      * @return Updates an entity in the data source. Should return a success code in JSON format.
      */
-    public abstract JSONObject doUpdate(JSONObject obj, String query);
+    public abstract JSONObject doUpdate(JSONObject obj, String resource);
 
     /**
      *
-     * @param query
+     * @param resource
      * @return Reads/Fetches an entity from the data source. Should return the entity details in JSON fomat.
      */
-    public abstract JSONObject doRead(String query);
+    public abstract JSONObject doRead(String resource);
 
     /**
      *
-     * @param query
+     * @param resource
      * @return Deletes an entity from the data source. Should return a success code in JSON format.
      */
-    public abstract JSONObject doDelete(String query);
+    public abstract JSONObject doDelete(String resource);
  
   
 

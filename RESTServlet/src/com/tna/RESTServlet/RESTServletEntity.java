@@ -29,22 +29,22 @@ import javax.servlet.annotation.WebServlet;
         /**
      *
      * @param obj
-     * @param query
+     * @param resource
      * @return Updates an entity in the data source. Should return a success code in JSON format.
      */
-    public abstract JSONObject update(JSONObject obj, String query);
+    public abstract JSONObject update(JSONObject obj, String resource);
 
      /**
      *
-     * @param query
+     * @param resource
      * @return Reads/Fetches an entity from the data source. Should return the entity details in JSON fomat.
      */
-    public abstract JSONObject read(String query);
+    public abstract JSONObject read(String resource);
     
       /**
      *
-     * @param query
+     * @param resource
      * @return Deletes an entity from the data source. Should return a success code in JSON format.
      */
-    public abstract JSONObject delete(String query);
+    public abstract JSONObject delete(String resource);
 }
