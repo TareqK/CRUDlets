@@ -5,9 +5,11 @@
         <group>
             <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/RESTServlet/RESTServletEntity.java</file>
             <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/RESTServlet/RESTServletURLParser.java</file>
+            <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/RESTServlet/RESTServletAuthenticatableEntity.java</file>
             <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/RESTServlet/RESTServletRequestParser.java</file>
             <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/RESTServlet/RESTServletEntityDataAccess.java</file>
             <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/RESTServlet/RESTServletEndpoint.java</file>
+            <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/RESTServlet/RESTServletAuthenticatedEndpoint.java</file>
         </group>
     </open-files>
 </project-private>
