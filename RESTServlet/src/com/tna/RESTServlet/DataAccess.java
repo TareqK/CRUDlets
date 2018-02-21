@@ -16,7 +16,7 @@ import org.json.simple.JSONObject;
  *
  * @author tareq
  */
-public interface RESTServletEntityDataAccess {
+public interface DataAccess {
 
     /**
      *

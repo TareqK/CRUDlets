@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-import com.tna.RESTServlet.RESTServletEndpoint;
+import com.tna.RESTServlet.Endpoint;
 import javax.servlet.annotation.WebServlet;
 import org.json.simple.JSONObject;
 
@@ -13,7 +13,7 @@ import org.json.simple.JSONObject;
  * @author tareq
  */
 @WebServlet("/test/*")
-public class TestEndpoint extends RESTServletEndpoint {
+public class TestEndpoint extends Endpoint {
 
     @Override
     public JSONObject doList() {

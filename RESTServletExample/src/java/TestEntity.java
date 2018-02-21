@@ -4,17 +4,17 @@
  * and open the template in the editor.
  */
 
-import com.tna.RESTServlet.RESTServletEntity;
-import com.tna.RESTServlet.RESTServletEntityDataAccess;
+import com.tna.RESTServlet.Entity;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import org.json.simple.JSONObject;
+import com.tna.RESTServlet.DataAccess;
 
 /**
  *
  * @author tareq
  */
-public class TestEntity extends RESTServletEntity implements RESTServletEntityDataAccess{
+public class TestEntity extends Entity implements DataAccess{
     
     public TestEntity(){
         

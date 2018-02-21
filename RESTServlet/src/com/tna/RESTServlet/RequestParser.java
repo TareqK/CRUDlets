@@ -15,9 +15,9 @@ import org.json.simple.parser.ParseException;
  *
  * @author tareq
  */
-class RESTServletRequestParser {
+class RequestParser {
 
-    protected static JSONObject parseRequest(HttpServletRequest request) throws IOException, RESTServletRequestError {//parse a request to json array
+    protected static JSONObject parse(HttpServletRequest request) throws IOException, RequestParseException {//parse a request to json array
         Object obj;
         JSONObject array = null;
         JSONParser parser = new JSONParser();
@@ -25,14 +25,14 @@ class RESTServletRequestParser {
             obj = parser.parse(request.getReader());
             array = (JSONObject) obj;
         } catch (ParseException pe) {
-            throw new RESTServletRequestError();
+            throw new RequestParseException();
         }
         return array;
     }
 
-    protected static class RESTServletRequestError extends Exception {
+    protected static class RequestParseException extends Exception {
 
-        public RESTServletRequestError() {
+        public RequestParseException() {
             System.out.println("Wrong Request");
         }
     }

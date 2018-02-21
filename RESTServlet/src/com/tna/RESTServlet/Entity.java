@@ -15,7 +15,7 @@ import javax.servlet.annotation.WebServlet;
  *
  */
 
-public abstract class RESTServletEntity {
+public abstract class Entity {
 
     /**
      *

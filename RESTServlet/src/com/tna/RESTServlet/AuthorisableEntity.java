@@ -11,7 +11,7 @@ import org.json.simple.JSONObject;
  *
  * @author tareq
  */
-public abstract class RESTServletAuthorisableEntity extends RESTServletEntity {
+public abstract class AuthorisableEntity extends Entity {
 
     /**
      * Authorises the current user for an operation based on his user level
@@ -19,14 +19,13 @@ public abstract class RESTServletAuthorisableEntity extends RESTServletEntity {
      * @param request
      * @param level
      * @return true/false depending if the user has the privileges
-     * @throws
-     * com.tna.RESTServlet.RESTServletAuthorisableEntity.UnauthorisedError
+     * @throws com.tna.RESTServlet.AuthorisableEntity.UnauthorisedException
      */
-    public abstract boolean authorise(JSONObject request, int level) throws UnauthorisedError;
+    public abstract boolean authorise(JSONObject request, int level) throws UnauthorisedException;
 
-    public static class UnauthorisedError extends Exception {
+    public static class UnauthorisedException extends Exception {
 
-        public UnauthorisedError() {
+        public UnauthorisedException() {
             System.out.println("oh noes");
         }
     }
