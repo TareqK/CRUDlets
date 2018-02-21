@@ -21,7 +21,6 @@ import org.json.simple.JSONObject;
  */
 public abstract class RESTServletAuthorisedEndpoint extends HttpServlet {
 
-    
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -30,17 +29,17 @@ public abstract class RESTServletAuthorisedEndpoint extends HttpServlet {
         try {
             String resource = RESTServletURLParser.parse(request);
             JSONObject parsed = RESTServletRequestParser.parseRequest(request);
-            try{
+            try {
                 if (resource == null) {
                     obj = doList(parsed);
                 } else {
-                    obj = doRead(resource,parsed);   
+                    obj = doRead(resource, parsed);
                 }
-            }catch (RESTServletAuthorisableEntity.UnauthorisedError e){
+            } catch (RESTServletAuthorisableEntity.UnauthorisedError e) {
                 response.sendError(HttpServletResponse.SC_FORBIDDEN);//
                 return;
             }
- 
+
         } catch (RESTServletURLParser.RESTServletURLParseError | RESTServletRequestParser.RESTServletRequestError e) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);//send a bad request
             return;
@@ -64,13 +63,14 @@ public abstract class RESTServletAuthorisedEndpoint extends HttpServlet {
         JSONObject obj = null;
         try {
             JSONObject parsed = RESTServletRequestParser.parseRequest(request);
-                obj = doCreate(parsed);
+            obj = doCreate(parsed);
 
         } catch (RESTServletRequestParser.RESTServletRequestError ex) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);//send a bad request
         } catch (RESTServletAuthorisableEntity.UnauthorisedError ex) {
-                response.sendError(HttpServletResponse.SC_FORBIDDEN);//
-                return;        }
+            response.sendError(HttpServletResponse.SC_FORBIDDEN);//
+            return;
+        }
         try (PrintWriter printWriter = response.getWriter()) {
             printWriter.print(obj);
         }
@@ -85,18 +85,19 @@ public abstract class RESTServletAuthorisedEndpoint extends HttpServlet {
         try {
             String resource = RESTServletURLParser.parse(request);
             JSONObject parsed = RESTServletRequestParser.parseRequest(request);
-                if (resource == null) {
-                    response.sendError(HttpServletResponse.SC_BAD_REQUEST);//send a bad request
-                    return;
-                } else {
-                    obj = doUpdate(parsed, resource);
-                }
+            if (resource == null) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST);//send a bad request
+                return;
+            } else {
+                obj = doUpdate(parsed, resource);
+            }
         } catch (RESTServletURLParser.RESTServletURLParseError | RESTServletRequestParser.RESTServletRequestError e) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);//send a bad request
             return;
         } catch (RESTServletAuthorisableEntity.UnauthorisedError ex) {
-                response.sendError(HttpServletResponse.SC_FORBIDDEN);//
-                return;        }
+            response.sendError(HttpServletResponse.SC_FORBIDDEN);//
+            return;
+        }
         try (PrintWriter printWriter = response.getWriter()) {
             if (obj == null) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);//send a bad request
@@ -116,17 +117,18 @@ public abstract class RESTServletAuthorisedEndpoint extends HttpServlet {
         try {
             String resource = RESTServletURLParser.parse(request);
             JSONObject parsed = RESTServletRequestParser.parseRequest(request);
-                if (resource == null) {
-                    return;
-                } else {
-                    obj = doDelete(resource,parsed);
-                }
+            if (resource == null) {
+                return;
+            } else {
+                obj = doDelete(resource, parsed);
+            }
         } catch (RESTServletURLParser.RESTServletURLParseError | RESTServletRequestParser.RESTServletRequestError e) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);//send a bad request
             return;
         } catch (RESTServletAuthorisableEntity.UnauthorisedError ex) {
-                response.sendError(HttpServletResponse.SC_FORBIDDEN);//
-                return;        }
+            response.sendError(HttpServletResponse.SC_FORBIDDEN);//
+            return;
+        }
         //send a bad request
         try (PrintWriter printWriter = response.getWriter()) {
             printWriter.print(obj);
@@ -144,36 +146,44 @@ public abstract class RESTServletAuthorisedEndpoint extends HttpServlet {
     /**
      *
      * @param obj
-     * @return Creates a new entry in the data source. Should return a success code in JSON format.
-     * @throws com.tna.RESTServlet.RESTServletAuthorisableEntity.UnauthorisedError
+     * @return Creates a new entry in the data source. Should return a success
+     * code in JSON format.
+     * @throws
+     * com.tna.RESTServlet.RESTServletAuthorisableEntity.UnauthorisedError
      */
-    public abstract JSONObject doCreate(JSONObject obj) throws RESTServletAuthorisableEntity.UnauthorisedError; 
+    public abstract JSONObject doCreate(JSONObject obj) throws RESTServletAuthorisableEntity.UnauthorisedError;
 
     /**
      *
      * @param obj
      * @param resource
-     * @return Updates an entity in the data source. Should return a success code in JSON format.
-     * @throws com.tna.RESTServlet.RESTServletAuthorisableEntity.UnauthorisedError
+     * @return Updates an entity in the data source. Should return a success
+     * code in JSON format.
+     * @throws
+     * com.tna.RESTServlet.RESTServletAuthorisableEntity.UnauthorisedError
      */
-    public abstract JSONObject doUpdate(JSONObject obj, String resource) throws RESTServletAuthorisableEntity.UnauthorisedError; 
+    public abstract JSONObject doUpdate(JSONObject obj, String resource) throws RESTServletAuthorisableEntity.UnauthorisedError;
 
     /**
      *
      * @param resource
      * @param obj
-     * @return Reads/Fetches an entity from the data source. Should return the entity details in JSON fomat.
-     * @throws com.tna.RESTServlet.RESTServletAuthorisableEntity.UnauthorisedError
+     * @return Reads/Fetches an entity from the data source. Should return the
+     * entity details in JSON fomat.
+     * @throws
+     * com.tna.RESTServlet.RESTServletAuthorisableEntity.UnauthorisedError
      */
-    public abstract JSONObject doRead(String resource,JSONObject obj) throws RESTServletAuthorisableEntity.UnauthorisedError; 
+    public abstract JSONObject doRead(String resource, JSONObject obj) throws RESTServletAuthorisableEntity.UnauthorisedError;
 
     /**
      *
      * @param resource
      * @param obj
-     * @return Deletes an entity from the data source. Should return a success code in JSON format.
-     * @throws com.tna.RESTServlet.RESTServletAuthorisableEntity.UnauthorisedError
+     * @return Deletes an entity from the data source. Should return a success
+     * code in JSON format.
+     * @throws
+     * com.tna.RESTServlet.RESTServletAuthorisableEntity.UnauthorisedError
      */
-    public abstract JSONObject doDelete(String resource, JSONObject obj) throws RESTServletAuthorisableEntity.UnauthorisedError; 
+    public abstract JSONObject doDelete(String resource, JSONObject obj) throws RESTServletAuthorisableEntity.UnauthorisedError;
 
 }

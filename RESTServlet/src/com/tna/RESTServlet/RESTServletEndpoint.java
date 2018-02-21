@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONObject;
 import javax.servlet.annotation.WebServlet;
+
 /**
  *
  * @author tareq
@@ -38,11 +39,11 @@ public abstract class RESTServletEndpoint extends HttpServlet {
             return;
         }
         try (PrintWriter printWriter = response.getWriter()) {
-            if(obj== null){
+            if (obj == null) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);//send a bad request
-                 return;
-            }else{
-            printWriter.print(obj);
+                return;
+            } else {
+                printWriter.print(obj);
             }
         }
 
@@ -82,10 +83,10 @@ public abstract class RESTServletEndpoint extends HttpServlet {
             return;
         }
         try (PrintWriter printWriter = response.getWriter()) {
-            if(obj== null){
+            if (obj == null) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);//send a bad request
                 return;
-            }else{
+            } else {
                 printWriter.print(obj);
             }
         }
@@ -127,7 +128,8 @@ public abstract class RESTServletEndpoint extends HttpServlet {
     /**
      *
      * @param obj
-     * @return Creates a new entry in the data source. Should return a success code in JSON format.
+     * @return Creates a new entry in the data source. Should return a success
+     * code in JSON format.
      */
     public abstract JSONObject doCreate(JSONObject obj);
 
@@ -135,24 +137,25 @@ public abstract class RESTServletEndpoint extends HttpServlet {
      *
      * @param obj
      * @param resource
-     * @return Updates an entity in the data source. Should return a success code in JSON format.
+     * @return Updates an entity in the data source. Should return a success
+     * code in JSON format.
      */
     public abstract JSONObject doUpdate(JSONObject obj, String resource);
 
     /**
      *
      * @param resource
-     * @return Reads/Fetches an entity from the data source. Should return the entity details in JSON fomat.
+     * @return Reads/Fetches an entity from the data source. Should return the
+     * entity details in JSON fomat.
      */
     public abstract JSONObject doRead(String resource);
 
     /**
      *
      * @param resource
-     * @return Deletes an entity from the data source. Should return a success code in JSON format.
+     * @return Deletes an entity from the data source. Should return a success
+     * code in JSON format.
      */
     public abstract JSONObject doDelete(String resource);
- 
-  
 
 }
