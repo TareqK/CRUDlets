@@ -24,7 +24,14 @@ public abstract class RESTServletAuthenticatableEntity extends RESTServletEntity
      * Authorises the current user for an operation based on his user level
      * @param request
      * @param level
-     * @return true/false depending if the user has the priveleges
+     * @return true/false depending if the user has the privelages
      */
-    public abstract boolean authorise(JSONObject request, int level);
+    public abstract boolean authorise(JSONObject request, int level) throws UnAuthorisedError;
+
+    private static class UnAuthorisedError extends Exception {
+
+        public UnAuthorisedError() {
+            System.out.println("oh noes");
+        }
+    }
 }
