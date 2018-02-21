@@ -5,6 +5,7 @@
  */
 package com.tna.RESTServlet;
 
+import java.io.Serializable;
 import org.json.simple.JSONObject;
 import javax.servlet.annotation.WebServlet;
 /**
@@ -14,7 +15,9 @@ import javax.servlet.annotation.WebServlet;
 
  public abstract class RESTServletEntity {
 
+   
     /**
+     * 
      *
      * @return returns a list of all entries
      */
