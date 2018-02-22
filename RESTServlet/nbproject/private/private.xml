@@ -3,13 +3,13 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/RESTServlet/RESTServletEntity.java</file>
-            <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/RESTServlet/RESTServletURLParser.java</file>
-            <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/RESTServlet/RESTServletAuthenticatableEntity.java</file>
-            <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/RESTServlet/RESTServletRequestParser.java</file>
-            <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/RESTServlet/RESTServletEntityDataAccess.java</file>
-            <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/RESTServlet/RESTServletEndpoint.java</file>
-            <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/RESTServlet/RESTServletAuthenticatedEndpoint.java</file>
+            <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/RESTServlet/Entity.java</file>
+            <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/RESTServlet/AuthorisedEndpoint.java</file>
+            <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/RESTServlet/DataAccess.java</file>
+            <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/RESTServlet/RequestParser.java</file>
+            <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/RESTServlet/AuthorisableEntity.java</file>
+            <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/RESTServlet/URLParser.java</file>
+            <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/RESTServlet/Endpoint.java</file>
         </group>
     </open-files>
 </project-private>

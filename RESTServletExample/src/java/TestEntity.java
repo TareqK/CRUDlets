@@ -8,13 +8,12 @@ import com.tna.RESTServlet.Entity;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import org.json.simple.JSONObject;
-import com.tna.RESTServlet.DataAccess;
 
 /**
  *
  * @author tareq
  */
-public class TestEntity extends Entity implements DataAccess{
+public class TestEntity extends Entity {
     
     public TestEntity(){
         
@@ -53,34 +52,6 @@ public class TestEntity extends Entity implements DataAccess{
         return obj;     
     }
 
-    @Override
-    public ResultSet queryList() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
 
-    @Override
-    public ResultSet queryCreate(JSONObject obj) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public ResultSet queryRead(String resource) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public ResultSet queryUpdate(JSONObject obj, String resource) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public ResultSet queryDelete(String resource) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Connection connect(String filename) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
     
 }

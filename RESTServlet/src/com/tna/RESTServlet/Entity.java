@@ -15,7 +15,7 @@ import javax.servlet.annotation.WebServlet;
  *
  */
 
-public abstract class Entity {
+public abstract class Entity implements Serializable{
 
     /**
      *

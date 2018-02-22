@@ -18,7 +18,7 @@ public abstract class AuthorisableEntity extends Entity {
      *
      * @param request
      * @param level
-     * @return true/false depending if the user has the privileges
+     * @return true/false depending if the user has the privileges and access
      * @throws com.tna.RESTServlet.AuthorisableEntity.UnauthorisedException
      */
     public abstract boolean authorise(JSONObject request, int level) throws UnauthorisedException;

@@ -139,7 +139,7 @@ public abstract class AuthorisedEndpoint extends HttpServlet {
      *
      * @param obj
      * @return returns a list of all entities
-     * @throws RESTServletAuthorisableEntity.UnauthorisedError
+     * @throws com.tna.RESTServlet.AuthorisableEntity.UnauthorisedException
      */
     public abstract JSONObject doList(JSONObject obj) throws AuthorisableEntity.UnauthorisedException;
 
