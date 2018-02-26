@@ -25,10 +25,10 @@ public class DBAccess {
 
     public static DBAccess access = DBAccess.getInstance();
     public static Connection connection = DBAccess.connect();
-    public static String host = "localhost";
-    public static String database = "test";
-    public static String username = "root";
-    public static String password = "root";
+    public String host = "localhost:3306";
+    public String database = "test";
+    public String username = "root";
+    public String password = "pass1234";
 
     public static DBAccess getInstance() {
         if (access == null) {
@@ -40,21 +40,28 @@ public class DBAccess {
     
     
     public static Connection connect() {
-        DBAccess.getInstance();
+        if(DBAccess.access.connection == null){
+            
+              System.out.println("no connection");
+            try {
+                Class.forName("com.mysql.jdbc.Driver");
+                String uri = "jdbc:mysql://" + DBAccess.access.host + "/" + DBAccess.access.database + "?" + "user=" + DBAccess.access.username + "&password=" + DBAccess.access.password + "";
+                System.out.println(uri);
+                DBAccess.access.connection = DriverManager.getConnection(uri);
+
+            } catch (SQLException | ClassNotFoundException e) {
+                System.out.println("fail");
+                DBAccess.access.connection = null;
+            }
+        }
+        
         return DBAccess.connection;
     }
 
     protected DBAccess(){
         
-        try{    
-            Class.forName("com.mysql.jdbc.Driver");  
-             String uri = "jdbc:mysql://"+DBAccess.host+
-                "/"+DBAccess.database+"?"+"user="+DBAccess.username+"&password="+DBAccess.password+"";
-            this.connection = DriverManager.getConnection(uri);
- 
-    } catch(SQLException |ClassNotFoundException e){
-        this.connection = null;
-    }
+        DBAccess access1 = DBAccess.access;
+      
 
 }
 }

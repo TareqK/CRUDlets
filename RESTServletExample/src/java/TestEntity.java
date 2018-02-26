@@ -5,8 +5,11 @@
  */
 
 import com.tna.RESTServlet.Entity;
+import com.tna.RESTServlet.PersistedEntity;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.json.simple.JSONObject;
 
 /**
@@ -30,7 +33,14 @@ public class TestEntity extends Entity {
     
     @Override
     public JSONObject create(JSONObject obj) {
-    return null;   
+        
+        try {
+            PersistedEntity.writeJavaObject(this);
+        } catch (Exception ex) {
+            Logger.getLogger(TestEntity.class.getName()).log(Level.SEVERE, null, ex);
+        }
+                
+                return null;   
     }
 
     @Override

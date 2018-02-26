@@ -5,11 +5,16 @@
         <group>
             <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/RESTServlet/Entity.java</file>
             <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/RESTServlet/AuthorisedEndpoint.java</file>
-            <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/RESTServlet/DataAccess.java</file>
+            <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/RESTServlet/ServiceInitializer.java</file>
+            <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/RESTServlet/testPersist.java</file>
+            <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/RESTServlet/DBAccess.java</file>
+            <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/RESTServlet/EntityPersistence.java</file>
             <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/RESTServlet/RequestParser.java</file>
             <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/RESTServlet/AuthorisableEntity.java</file>
             <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/RESTServlet/URLParser.java</file>
+            <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/RESTServlet/testProgram.java</file>
             <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/RESTServlet/Endpoint.java</file>
+            <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/RESTServlet/Entity1.java</file>
         </group>
     </open-files>
 </project-private>

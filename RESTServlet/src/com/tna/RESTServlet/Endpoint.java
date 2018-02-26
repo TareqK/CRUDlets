@@ -60,7 +60,12 @@ public abstract class Endpoint extends HttpServlet {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);//send a bad request
         }
         try (PrintWriter printWriter = response.getWriter()) {
-            printWriter.print(obj);
+            if (obj == null) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST);//send a bad request
+                return;
+            } else {
+                printWriter.print(obj);
+            }
         }
 
     }
@@ -109,8 +114,13 @@ public abstract class Endpoint extends HttpServlet {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);//send a bad request
             return;
         }
-        try (PrintWriter printWriter = response.getWriter()) {
-            printWriter.print(obj);
+       try (PrintWriter printWriter = response.getWriter()) {
+             if (obj == null) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST);//send a bad request
+                return;
+            } else {
+                printWriter.print(obj);
+            }
         }
     }
 
