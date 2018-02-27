@@ -17,27 +17,28 @@ public class TestEndpoint extends Endpoint {
 
     @Override
     public JSONObject doList() {
-      return new TestEntity().list();
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public JSONObject doCreate(JSONObject obj) {
-      return new TestEntity().create(obj);
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public JSONObject doUpdate(JSONObject obj, String query) {
-        return new TestEntity().update(obj,query);    
+    public JSONObject doUpdate(JSONObject obj, int resource) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public JSONObject doRead(String query) {
-        return new TestEntity().read(query);    
+    public JSONObject doRead(int resource) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public JSONObject doDelete(String query) {
-       return new TestEntity().delete(query);    
+    public JSONObject doDelete(int resource) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
     
 }

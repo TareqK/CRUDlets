@@ -9,14 +9,11 @@ import com.tna.Utils.URLParser;
 import com.tna.Utils.RequestParser;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONObject;
-import javax.servlet.annotation.WebServlet;
 
 /**
  *
@@ -28,7 +25,7 @@ public abstract class Endpoint extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("application/json;charset=UTF-8");
-        JSONObject obj = null;
+        JSONObject obj;
         try {
             Integer resource = URLParser.parse(request);
             if (resource == null) {
@@ -43,7 +40,6 @@ public abstract class Endpoint extends HttpServlet {
         try (PrintWriter printWriter = response.getWriter()) {
             if (obj == null) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);//send a bad request
-                return;
             } else {
                 printWriter.print(obj);
             }
@@ -60,11 +56,11 @@ public abstract class Endpoint extends HttpServlet {
             obj = doCreate(RequestParser.parse(request));
         } catch (RequestParser.RequestParseException ex) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);//send a bad request
+            return;
         }
         try (PrintWriter printWriter = response.getWriter()) {
             if (obj == null) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST);//send a bad request
-                return;
             } else {
                 printWriter.print(obj);
             }
@@ -158,7 +154,7 @@ public abstract class Endpoint extends HttpServlet {
      *
      * @param resource
      * @return Reads/Fetches an entity from the data source. Should return the
-     * entity details in JSON fomat.
+     * entity details in JSON format.
      */
     public abstract JSONObject doRead(int resource);
 

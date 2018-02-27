@@ -26,10 +26,11 @@ public abstract class AuthorisedEndpoint extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("application/json;charset=UTF-8");
-        JSONObject obj = null;
+        JSONObject obj;
         try {
             Integer resource = URLParser.parse(request);
             JSONObject json = RequestParser.parse(request);
+            json.put("token", request.getParameter("token"));
             try {
                 if (resource == null) {
                     obj = doList(json);
@@ -49,7 +50,6 @@ public abstract class AuthorisedEndpoint extends HttpServlet {
         try (PrintWriter printWriter = response.getWriter()) {
             if (obj == null) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);//send a bad request
-                return;
             } else {
                 printWriter.print(obj);
             }
@@ -64,6 +64,8 @@ public abstract class AuthorisedEndpoint extends HttpServlet {
         JSONObject obj = null;
         try {
             JSONObject json = RequestParser.parse(request);
+            json.put("token", request.getParameter("token"));
+
             obj = doCreate(json);
 
         } catch (RequestParser.RequestParseException ex) {
@@ -73,9 +75,8 @@ public abstract class AuthorisedEndpoint extends HttpServlet {
             return;
         }
         try (PrintWriter printWriter = response.getWriter()) {
-             if (obj == null) {
+            if (obj == null) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST);//send a bad request
-                return;
             } else {
                 printWriter.print(obj);
             }
@@ -87,10 +88,12 @@ public abstract class AuthorisedEndpoint extends HttpServlet {
     protected void doPut(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("application/json;charset=UTF-8");
-        JSONObject obj = null;
+        JSONObject obj ;
         try {
             Integer resource = URLParser.parse(request);
             JSONObject json = RequestParser.parse(request);
+            json.put("token", request.getParameter("token"));
+
             if (resource == null) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST);//send a bad request
                 return;
@@ -107,7 +110,6 @@ public abstract class AuthorisedEndpoint extends HttpServlet {
         try (PrintWriter printWriter = response.getWriter()) {
             if (obj == null) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);//send a bad request
-                return;
             } else {
                 printWriter.print(obj);
             }
@@ -123,10 +125,12 @@ public abstract class AuthorisedEndpoint extends HttpServlet {
         try {
             Integer resource = URLParser.parse(request);
             JSONObject json = RequestParser.parse(request);
+            json.put("token", request.getParameter("token"));
+
             if (resource == null) {
                 return;
             } else {
-                obj = doDelete(json,resource);
+                obj = doDelete(json, resource);
             }
         } catch (URLParser.URLParseException | RequestParser.RequestParseException e) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);//send a bad request
@@ -137,14 +141,13 @@ public abstract class AuthorisedEndpoint extends HttpServlet {
         }
         //send a bad request
 
-           try (PrintWriter printWriter = response.getWriter()) {
-             if (obj == null) {
+        try (PrintWriter printWriter = response.getWriter()) {
+            if (obj == null) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST);//send a bad request
-                return;
             } else {
                 printWriter.print(obj);
             }
-        
+
         }
     }
 
@@ -152,7 +155,7 @@ public abstract class AuthorisedEndpoint extends HttpServlet {
      *
      * @param obj
      * @return returns a list of all entities
-     * @throws com.tna.RESTServlet.AuthorisableEntity.UnauthorisedException
+     * @throws com.tna.Utils.Authorisation.UnauthorisedException
      */
     public abstract JSONObject doList(JSONObject obj) throws Authorisation.UnauthorisedException;
 
@@ -161,7 +164,7 @@ public abstract class AuthorisedEndpoint extends HttpServlet {
      * @param json
      * @return Creates a new entry in the data source. Should return a success
      * code in JSON format.
-     * @throws com.tna.RESTServlet.AuthorisableEntity.UnauthorisedException
+     * @throws com.tna.Utils.Authorisation.UnauthorisedException
      */
     public abstract JSONObject doCreate(JSONObject json) throws Authorisation.UnauthorisedException;
 
@@ -171,7 +174,7 @@ public abstract class AuthorisedEndpoint extends HttpServlet {
      * @param resource
      * @return Updates an entity in the data source. Should return a success
      * code in JSON format.
-     * @throws com.tna.RESTServlet.AuthorisableEntity.UnauthorisedException
+     * @throws com.tna.Utils.Authorisation.UnauthorisedException
      */
     public abstract JSONObject doUpdate(JSONObject json, int resource) throws Authorisation.UnauthorisedException;
 
@@ -180,8 +183,8 @@ public abstract class AuthorisedEndpoint extends HttpServlet {
      * @param resource
      * @param json
      * @return Reads/Fetches an entity from the data source. Should return the
-     * entity details in JSON fomat.
-     * @throws com.tna.RESTServlet.AuthorisableEntity.UnauthorisedException
+     * entity details in JSON format.
+     * @throws com.tna.Utils.Authorisation.UnauthorisedException
      */
     public abstract JSONObject doRead(JSONObject json, int resource) throws Authorisation.UnauthorisedException;
 
@@ -191,7 +194,7 @@ public abstract class AuthorisedEndpoint extends HttpServlet {
      * @param json
      * @return Deletes an entity from the data source. Should return a success
      * code in JSON format.
-     * @throws com.tna.RESTServlet.AuthorisableEntity.UnauthorisedException
+     * @throws com.tna.Utils.Authorisation.UnauthorisedException
      */
     public abstract JSONObject doDelete(JSONObject json, int resource) throws Authorisation.UnauthorisedException;
 

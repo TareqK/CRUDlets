@@ -16,10 +16,10 @@ public class Init extends ServiceInitializer{
 
     @Override
     public void onInit() {
-        Access.host = "stuff";
-        Access.database = "tayseer";
-        Access.username = "mememe";
-        Access.password = "Hello its me";
+        Access.access.host = "stuff";
+        Access.access.database = "tayseer";
+        Access.access.username = "mememe";
+        Access.access.password = "Hello its me";
         Access.connect();
     }
 

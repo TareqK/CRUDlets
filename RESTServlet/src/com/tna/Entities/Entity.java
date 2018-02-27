@@ -8,7 +8,6 @@ package com.tna.Entities;
 import java.io.Serializable;
 import java.sql.SQLException;
 import org.json.simple.JSONObject;
-import javax.servlet.annotation.WebServlet;
 
 /**
  *
@@ -49,7 +48,7 @@ public abstract class Entity implements Serializable{
      *
      * @param resource
      * @return Reads/Fetches an entity from the data source. Should return the
-     * entity details in JSON fomat.
+     * entity details in JSON format.
      * @throws java.sql.SQLException
      */
     public abstract JSONObject read(int resource) throws SQLException;

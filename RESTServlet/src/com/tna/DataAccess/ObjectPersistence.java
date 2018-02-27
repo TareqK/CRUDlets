@@ -5,18 +5,15 @@
  */
 package com.tna.DataAccess;
 
-import com.tna.DataAccess.Access;
 import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.lang.reflect.Field;
-import static java.sql.JDBCType.BLOB;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import org.json.simple.JSONObject;
-import javax.servlet.annotation.WebServlet;
 
 /**
  *

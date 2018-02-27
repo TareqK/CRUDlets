@@ -5,20 +5,12 @@
  */
 package com.tna.DataAccess;
 
-import com.tna.DataAccess.Access;
-import java.io.ByteArrayInputStream;
-import java.io.ObjectInputStream;
-import java.io.Serializable;
 import java.lang.reflect.Field;
-import static java.sql.JDBCType.BLOB;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.json.simple.JSONObject;
-import javax.servlet.annotation.WebServlet;
 
 /**
  *
@@ -65,7 +57,8 @@ public abstract class Persistence {
 
     public static JSONObject read(Object object, int id) throws SQLException {
         String className = object.getClass().getSimpleName();
-        PreparedStatement pstmt = Access.connection.prepareStatement((String.format(READ_OBJECT_SQL, className)), Statement.RETURN_GENERATED_KEYS);
+        PreparedStatement pstmt;
+        pstmt = Access.connection.prepareStatement((String.format(READ_OBJECT_SQL, className)), Statement.RETURN_GENERATED_KEYS);
         Field[] fields = object.getClass().getDeclaredFields();
         pstmt.setLong(1, id);
         ResultSet rs = pstmt.executeQuery();

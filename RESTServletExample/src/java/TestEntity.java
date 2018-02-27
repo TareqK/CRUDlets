@@ -8,6 +8,7 @@ import com.tna.Entities.Entity;
 import com.tna.DataAccess.ObjectPersistence;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.json.simple.JSONObject;
@@ -17,51 +18,31 @@ import org.json.simple.JSONObject;
  * @author tareq
  */
 public class TestEntity extends Entity {
-    
-    public TestEntity(){
-        
-    }
-    
-    
-    @Override
-    public JSONObject list() {
-        JSONObject obj = new JSONObject();
-        obj.put("you tried to ","list");
-        return obj;
-    }
 
-    
     @Override
-    public JSONObject create(JSONObject obj) {
-        
-        try {
-            ObjectPersistence.writeJavaObject(this);
-        } catch (Exception ex) {
-            Logger.getLogger(TestEntity.class.getName()).log(Level.SEVERE, null, ex);
-        }
-                
-                return null;   
+    public JSONObject list() throws SQLException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public JSONObject update(JSONObject obj, String query) {
-    return null;    
+    public JSONObject create(JSONObject obj) throws SQLException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public JSONObject read(String query) {
-        JSONObject obj = new JSONObject();
-        obj.put("you tried to read",query);
-        return obj;    
+    public JSONObject update(JSONObject obj, int resource) throws SQLException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public JSONObject delete(String query) {
-        JSONObject obj = new JSONObject();
-        obj.put("you tried to delete",query);
-        return obj;     
+    public JSONObject read(int resource) throws SQLException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-
+    @Override
+    public JSONObject delete(int resource) throws SQLException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+ 
     
 }

@@ -11,7 +11,7 @@ import org.json.simple.JSONObject;
  *
  * @author tareq
  */
-public interface Authorisation {
+public class Authorisation {
     
     public static class UnauthorisedException extends Exception {
 
