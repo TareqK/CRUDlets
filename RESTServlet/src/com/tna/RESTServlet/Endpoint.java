@@ -28,7 +28,7 @@ public abstract class Endpoint extends HttpServlet {
         response.setContentType("application/json;charset=UTF-8");
         JSONObject obj = null;
         try {
-            String resource = URLParser.parse(request);
+            Integer resource = URLParser.parse(request);
             if (resource == null) {
                 obj = doList();
             } else {
@@ -76,7 +76,7 @@ public abstract class Endpoint extends HttpServlet {
         response.setContentType("application/json;charset=UTF-8");
         JSONObject obj = null;
         try {
-            String resource = URLParser.parse(request);
+            Integer resource = URLParser.parse(request);
             if (resource == null) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST);//send a bad request
                 return;
@@ -104,7 +104,7 @@ public abstract class Endpoint extends HttpServlet {
         response.setContentType("application/json;charset=UTF-8");
         JSONObject obj;
         try {
-            String resource = URLParser.parse(request);
+            Integer resource = URLParser.parse(request);
             if (resource == null) {
                 return;
             } else {
@@ -150,7 +150,7 @@ public abstract class Endpoint extends HttpServlet {
      * @return Updates an entity in the data source. Should return a success
      * code in JSON format.
      */
-    public abstract JSONObject doUpdate(JSONObject obj, String resource);
+    public abstract JSONObject doUpdate(JSONObject obj, int resource);
 
     /**
      *
@@ -158,7 +158,7 @@ public abstract class Endpoint extends HttpServlet {
      * @return Reads/Fetches an entity from the data source. Should return the
      * entity details in JSON fomat.
      */
-    public abstract JSONObject doRead(String resource);
+    public abstract JSONObject doRead(int resource);
 
     /**
      *
@@ -166,6 +166,6 @@ public abstract class Endpoint extends HttpServlet {
      * @return Deletes an entity from the data source. Should return a success
      * code in JSON format.
      */
-    public abstract JSONObject doDelete(String resource);
+    public abstract JSONObject doDelete(int resource);
 
 }

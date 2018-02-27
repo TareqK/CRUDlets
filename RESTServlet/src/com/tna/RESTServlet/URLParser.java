@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 class URLParser {
 
-    protected static String parse(HttpServletRequest request) throws URLParseException {//URI parser
+    protected static Integer parse(HttpServletRequest request) throws URLParseException {//URI parser
         String pathInfo = request.getPathInfo();
         if (pathInfo == null || pathInfo.equals("/")) {
             return null;// send null if there is no path
@@ -22,7 +22,7 @@ class URLParser {
             if (splits.length != 2) {
                 throw new URLParseException();// send -1 if the path is the wrong format
             } else {
-                return splits[1];
+                return Integer.parseInt(splits[1]);
             }
         }
     }

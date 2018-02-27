@@ -22,7 +22,7 @@ import javax.servlet.annotation.WebServlet;
  * @author tareq
  *
  */
-public abstract class PersistedEntity implements Serializable {
+public abstract class ObjectPersistedEntity implements Serializable {
 
     static final String CREATE_OBJECT_SQL = "INSERT INTO %s (object_value) VALUES (?)";
     static final String READ_OBJECT_SQL = "SELECT object_value FROM %s WHERE id = ?";

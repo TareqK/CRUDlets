@@ -39,7 +39,7 @@ public abstract class Entity implements Serializable{
      * @return Updates an entity in the data source. Should return a success
      * code in JSON format.
      */
-    public abstract JSONObject update(JSONObject obj, String resource);
+    public abstract JSONObject update(JSONObject obj, int resource);
 
     /**
      *
@@ -47,7 +47,7 @@ public abstract class Entity implements Serializable{
      * @return Reads/Fetches an entity from the data source. Should return the
      * entity details in JSON fomat.
      */
-    public abstract JSONObject read(String resource);
+    public abstract JSONObject read(int resource);
 
     /**
      *
@@ -55,5 +55,5 @@ public abstract class Entity implements Serializable{
      * @return Deletes an entity from the data source. Should return a success
      * code in JSON format.
      */
-    public abstract JSONObject delete(String resource);
+    public abstract JSONObject delete(int resource);
 }

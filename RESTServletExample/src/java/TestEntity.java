@@ -5,7 +5,7 @@
  */
 
 import com.tna.RESTServlet.Entity;
-import com.tna.RESTServlet.PersistedEntity;
+import com.tna.RESTServlet.ObjectPersistedEntity;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.util.logging.Level;
@@ -35,7 +35,7 @@ public class TestEntity extends Entity {
     public JSONObject create(JSONObject obj) {
         
         try {
-            PersistedEntity.writeJavaObject(this);
+            ObjectPersistedEntity.writeJavaObject(this);
         } catch (Exception ex) {
             Logger.getLogger(TestEntity.class.getName()).log(Level.SEVERE, null, ex);
         }

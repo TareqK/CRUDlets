@@ -5,7 +5,7 @@
  */
 package com.tna.test;
 
-import static java.lang.Math.random;
+import com.tna.RESTServlet.Authorisation;
 import org.json.simple.JSONObject;
 
 /**
@@ -16,14 +16,9 @@ import org.json.simple.JSONObject;
 public class testProgram{
     
 public static void main(String[] args) throws Exception{
-   testPersist tp = new testPersist();
-   tp.read(105);
-   tp.one=1;
-   tp.two=2;
-   tp.three=3;
-   tp.update(105);
-   tp.read(105);
-    
+    Authorisation.authoriedClass = com.tna.testPersist;
+    System.out.println(Authorisation.authoriedClass);
+   Authorisation.authorise("11", 0);
 }
 
 
