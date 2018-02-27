@@ -5,10 +5,10 @@
  */
 package com.tna.test;
 
-import com.tna.RESTServlet.EntityPersistence;
+import com.tna.DataAccess.Persistence;
 import org.json.simple.JSONObject;
-import com.tna.RESTServlet.Entity;
-import com.tna.RESTServlet.JSON;
+import com.tna.Entities.Entity;
+import com.tna.Utils.JSON;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 /**
@@ -36,7 +36,7 @@ public class testPersist extends Entity{
     @Override
     public JSONObject list() {
         try {
-            return EntityPersistence.list(this);
+            return Persistence.list(this);
         } catch (Exception ex) {
             Logger.getLogger(testPersist.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -45,7 +45,7 @@ public class testPersist extends Entity{
 
     public void create(){
       try {
-            EntityPersistence.create(this);
+            Persistence.create(this);
         } catch (Exception ex) {
             Logger.getLogger(testPersist.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -54,7 +54,7 @@ public class testPersist extends Entity{
     @Override
     public JSONObject create(JSONObject obj) {
         try {
-            return EntityPersistence.create(this);
+            return Persistence.create(this);
         } catch (Exception ex) {
             Logger.getLogger(testPersist.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -65,7 +65,7 @@ public class testPersist extends Entity{
     public JSONObject update(JSONObject obj, int resource) {
         JSON.JSONtoObject(this, obj);
         try {
-            return EntityPersistence.update(this, resource);
+            return Persistence.update(this, resource);
         } catch (Exception ex) {
             Logger.getLogger(testPersist.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -75,7 +75,7 @@ public class testPersist extends Entity{
     @Override
     public JSONObject read(int resource) {
          try {
-            return EntityPersistence.read(this, resource);
+            return Persistence.read(this, resource);
         } catch (Exception ex) {
             Logger.getLogger(testPersist.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -85,7 +85,7 @@ public class testPersist extends Entity{
     @Override
     public JSONObject delete(int resource) {
     try {
-            return EntityPersistence.delete(this, resource);
+            return Persistence.delete(this, resource);
         } catch (Exception ex) {
             Logger.getLogger(testPersist.class.getName()).log(Level.SEVERE, null, ex);
         }    

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.tna.RESTServlet;
+package com.tna.Utils;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -11,9 +11,9 @@ import javax.servlet.http.HttpServletRequest;
  *
  * @author tareq
  */
-class URLParser {
+public class URLParser {
 
-    protected static Integer parse(HttpServletRequest request) throws URLParseException {//URI parser
+    public static Integer parse(HttpServletRequest request) throws URLParseException {//URI parser
         String pathInfo = request.getPathInfo();
         if (pathInfo == null || pathInfo.equals("/")) {
             return null;// send null if there is no path
@@ -27,7 +27,7 @@ class URLParser {
         }
     }
 
-    protected static class URLParseException extends Exception {
+    public static class URLParseException extends Exception {
 
         public URLParseException() {
             System.out.println("Wrong URI");

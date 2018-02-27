@@ -5,7 +5,7 @@
  */
 package com.tna.test;
 
-import com.tna.RESTServlet.Authorisation;
+import com.tna.Utils.Authorisation;
 import org.json.simple.JSONObject;
 
 /**
@@ -16,9 +16,7 @@ import org.json.simple.JSONObject;
 public class testProgram{
     
 public static void main(String[] args) throws Exception{
-    Authorisation.authoriedClass = com.tna.testPersist;
-    System.out.println(Authorisation.authoriedClass);
-   Authorisation.authorise("11", 0);
+ 
 }
 
 

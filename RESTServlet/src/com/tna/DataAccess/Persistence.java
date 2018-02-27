@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.tna.RESTServlet;
+package com.tna.DataAccess;
 
+import com.tna.DataAccess.Access;
 import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
@@ -14,6 +15,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.json.simple.JSONObject;
 import javax.servlet.annotation.WebServlet;
 
@@ -22,7 +25,7 @@ import javax.servlet.annotation.WebServlet;
  * @author tareq
  *
  */
-public abstract class EntityPersistence {
+public abstract class Persistence {
 
     static final String CREATE_OBJECT_SQL = "INSERT INTO %s (%s) VALUES (%s) ";
     static final String READ_OBJECT_SQL = "SELECT * FROM %s WHERE id = ?";
@@ -30,7 +33,7 @@ public abstract class EntityPersistence {
     static final String DELETE_OBJECT_SQL = "DELETE FROM %s WHERE id = ?";
     static final String LIST_OBJECT_SQL = "SELECT * FROM %s";
 
-    public static JSONObject create(Object object) throws Exception {
+    public static JSONObject create(Object object) throws SQLException {
         String className = object.getClass().getSimpleName();
         Field[] fields = object.getClass().getDeclaredFields();
         StringBuilder columns = new StringBuilder();
@@ -42,10 +45,14 @@ public abstract class EntityPersistence {
         }
         columns.deleteCharAt((columns.length() - 1));
         values.deleteCharAt((values.length() - 1));
-        PreparedStatement pstmt = DBAccess.connection.prepareStatement((String.format(CREATE_OBJECT_SQL, className, columns.toString(), values.toString())), Statement.RETURN_GENERATED_KEYS);
+        PreparedStatement pstmt = Access.connection.prepareStatement((String.format(CREATE_OBJECT_SQL, className, columns.toString(), values.toString())), Statement.RETURN_GENERATED_KEYS);
         int i = 1;
         for (Field field : fields) {
-            pstmt.setObject(i, field.get(object));
+            try {
+                pstmt.setObject(i, field.get(object));
+            } catch (IllegalArgumentException | IllegalAccessException ex) {
+                return null;
+            }
             i++;
         }
         try {
@@ -56,20 +63,24 @@ public abstract class EntityPersistence {
         return null;
     }
 
-    public static JSONObject read(Object object, int id) throws Exception {
+    public static JSONObject read(Object object, int id) throws SQLException {
         String className = object.getClass().getSimpleName();
-        PreparedStatement pstmt = DBAccess.connection.prepareStatement((String.format(READ_OBJECT_SQL, className)), Statement.RETURN_GENERATED_KEYS);
+        PreparedStatement pstmt = Access.connection.prepareStatement((String.format(READ_OBJECT_SQL, className)), Statement.RETURN_GENERATED_KEYS);
         Field[] fields = object.getClass().getDeclaredFields();
         pstmt.setLong(1, id);
         ResultSet rs = pstmt.executeQuery();
         rs.next();
          for (Field field : fields) {
-            field.set(object, rs.getObject(field.getName()));
+            try {
+                field.set(object, rs.getObject(field.getName()));
+            } catch (IllegalArgumentException | IllegalAccessException ex) {
+               return null;
+            }
         }
        return null;
     }
 
-    public static JSONObject update(Object object, int id) throws Exception {
+    public static JSONObject update(Object object, int id) throws SQLException {
         String className = object.getClass().getSimpleName();
         Field[] fields = object.getClass().getDeclaredFields();
         StringBuilder values = new StringBuilder();
@@ -77,10 +88,14 @@ public abstract class EntityPersistence {
             values.append(field.getName()).append(" = ?,");
         }
         values.deleteCharAt((values.length() - 1));
-        PreparedStatement pstmt = DBAccess.connection.prepareStatement((String.format(UPDATE_OBJECT_SQL, className , values.toString())), Statement.RETURN_GENERATED_KEYS);
+        PreparedStatement pstmt = Access.connection.prepareStatement((String.format(UPDATE_OBJECT_SQL, className , values.toString())), Statement.RETURN_GENERATED_KEYS);
         int i = 1;
         for (Field field : fields) {
-            pstmt.setObject(i, field.get(object));
+            try {
+                pstmt.setObject(i, field.get(object));
+            } catch (IllegalArgumentException | IllegalAccessException ex) {
+                return null;
+            }
             i++;
             
         }
@@ -95,9 +110,9 @@ public abstract class EntityPersistence {
         return null;
     }
 
-    public static JSONObject delete(Object object, int id) throws Exception {
+    public static JSONObject delete(Object object, int id) throws SQLException {
         String className = object.getClass().getSimpleName();
-        PreparedStatement pstmt = DBAccess.connection.prepareStatement((String.format(DELETE_OBJECT_SQL, className)), Statement.RETURN_GENERATED_KEYS);
+        PreparedStatement pstmt = Access.connection.prepareStatement((String.format(DELETE_OBJECT_SQL, className)), Statement.RETURN_GENERATED_KEYS);
         pstmt.setInt(1, id);
         try {
             pstmt.execute();
@@ -110,9 +125,9 @@ public abstract class EntityPersistence {
 
     }
 
-    public static JSONObject list(Object object) throws Exception {
+    public static JSONObject list(Object object) throws SQLException {
         String className = object.getClass().getSimpleName();
-        PreparedStatement pstmt = DBAccess.connection.prepareStatement((String.format(LIST_OBJECT_SQL, className)), Statement.RETURN_GENERATED_KEYS);
+        PreparedStatement pstmt = Access.connection.prepareStatement((String.format(LIST_OBJECT_SQL, className)), Statement.RETURN_GENERATED_KEYS);
         ResultSet rs = pstmt.executeQuery();
         System.out.println(rs);
         try {

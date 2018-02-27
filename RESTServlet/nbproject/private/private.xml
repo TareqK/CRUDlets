@@ -3,17 +3,21 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/RESTServlet/Entity.java</file>
-            <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/RESTServlet/AuthorisedEndpoint.java</file>
-            <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/RESTServlet/ServiceInitializer.java</file>
-            <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/RESTServlet/DBAccess.java</file>
+            <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/DataAccess/ObjectPersistence.java</file>
+            <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/Endpoints/AuthorisedEndpoint.java</file>
+            <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/Entities/User.java</file>
+            <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/DataAccess/Persistence.java</file>
+            <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/DataAccess/Access.java</file>
+            <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/Entities/Entity.java</file>
+            <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/Utils/RequestParser.java</file>
+            <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/Utils/URLParser.java</file>
+            <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/Utils/Authorisation.java</file>
+            <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/Utils/ServiceInitializer.java</file>
             <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/test/testProgram.java</file>
-            <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/RESTServlet/RequestParser.java</file>
-            <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/RESTServlet/AuthorisableEntity.java</file>
-            <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/RESTServlet/URLParser.java</file>
+            <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/Utils/JSON.java</file>
+            <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/Endpoints/Endpoint.java</file>
             <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/test/testPersist.java</file>
-            <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/RESTServlet/Endpoint.java</file>
-            <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/RESTServlet/PersistedEntity.java</file>
+            <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/Endpoints/AuthenticationEndpoint.java</file>
         </group>
     </open-files>
 </project-private>

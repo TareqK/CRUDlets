@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.tna.RESTServlet;
+package com.tna.DataAccess;
 
+import com.tna.DataAccess.Access;
 import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
@@ -22,7 +23,7 @@ import javax.servlet.annotation.WebServlet;
  * @author tareq
  *
  */
-public abstract class ObjectPersistedEntity implements Serializable {
+public abstract class ObjectPersistence implements Serializable {
 
     static final String CREATE_OBJECT_SQL = "INSERT INTO %s (object_value) VALUES (?)";
     static final String READ_OBJECT_SQL = "SELECT object_value FROM %s WHERE id = ?";
@@ -32,7 +33,7 @@ public abstract class ObjectPersistedEntity implements Serializable {
 
     public JSONObject create(Object object) throws Exception {
         String className = object.getClass().getSimpleName();
-        PreparedStatement pstmt = DBAccess.connection.prepareStatement((String.format(CREATE_OBJECT_SQL, className)), Statement.RETURN_GENERATED_KEYS);
+        PreparedStatement pstmt = Access.connection.prepareStatement((String.format(CREATE_OBJECT_SQL, className)), Statement.RETURN_GENERATED_KEYS);
         pstmt.setObject(1, object);
         try {
             pstmt.execute();
@@ -44,7 +45,7 @@ public abstract class ObjectPersistedEntity implements Serializable {
 
     public JSONObject read(Object object, int id) throws Exception {
         String className = object.getClass().getSimpleName();
-        PreparedStatement pstmt = DBAccess.connection.prepareStatement((String.format(READ_OBJECT_SQL, className)), Statement.RETURN_GENERATED_KEYS);
+        PreparedStatement pstmt = Access.connection.prepareStatement((String.format(READ_OBJECT_SQL, className)), Statement.RETURN_GENERATED_KEYS);
 
         pstmt.setLong(1, id);
         ResultSet rs = pstmt.executeQuery();
@@ -67,7 +68,7 @@ public abstract class ObjectPersistedEntity implements Serializable {
 
     public JSONObject update(Object object, int id) throws Exception {
         String className = object.getClass().getSimpleName();
-        PreparedStatement pstmt = DBAccess.connection.prepareStatement((String.format(UPDATE_OBJECT_SQL, className)), Statement.RETURN_GENERATED_KEYS);
+        PreparedStatement pstmt = Access.connection.prepareStatement((String.format(UPDATE_OBJECT_SQL, className)), Statement.RETURN_GENERATED_KEYS);
         pstmt.setObject(1, object);
         pstmt.setInt(2, id);
         try {
@@ -81,7 +82,7 @@ public abstract class ObjectPersistedEntity implements Serializable {
 
     public JSONObject delete(Object object, int id) throws Exception {
         String className = object.getClass().getSimpleName();
-        PreparedStatement pstmt = DBAccess.connection.prepareStatement((String.format(DELETE_OBJECT_SQL, className)), Statement.RETURN_GENERATED_KEYS);
+        PreparedStatement pstmt = Access.connection.prepareStatement((String.format(DELETE_OBJECT_SQL, className)), Statement.RETURN_GENERATED_KEYS);
         pstmt.setInt(1, id);
         try {
             pstmt.execute();
@@ -96,7 +97,7 @@ public abstract class ObjectPersistedEntity implements Serializable {
 
     public JSONObject list(Object object) throws Exception {
         String className = object.getClass().getSimpleName();
-        PreparedStatement pstmt = DBAccess.connection.prepareStatement((String.format(LIST_OBJECT_SQL, className)), Statement.RETURN_GENERATED_KEYS);
+        PreparedStatement pstmt = Access.connection.prepareStatement((String.format(LIST_OBJECT_SQL, className)), Statement.RETURN_GENERATED_KEYS);
         ResultSet rs = pstmt.executeQuery();
         System.out.println(rs);
         try{while (rs.next()) {

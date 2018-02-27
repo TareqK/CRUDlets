@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.tna.RESTServlet;
+package com.tna.Entities;
 
 import java.io.Serializable;
+import java.sql.SQLException;
 import org.json.simple.JSONObject;
 import javax.servlet.annotation.WebServlet;
 
@@ -21,16 +22,18 @@ public abstract class Entity implements Serializable{
      *
      *
      * @return returns a list of all entries
+     * @throws java.sql.SQLException
      */
-    public abstract JSONObject list();
+    public abstract JSONObject list() throws SQLException;
 
     /**
      *
      * @param obj
      * @return Creates a new entry in the data source. Should return a success
      * code in JSON format.
+     * @throws java.sql.SQLException
      */
-    public abstract JSONObject create(JSONObject obj);
+    public abstract JSONObject create(JSONObject obj) throws SQLException;
 
     /**
      *
@@ -38,22 +41,25 @@ public abstract class Entity implements Serializable{
      * @param resource
      * @return Updates an entity in the data source. Should return a success
      * code in JSON format.
+     * @throws java.sql.SQLException
      */
-    public abstract JSONObject update(JSONObject obj, int resource);
+    public abstract JSONObject update(JSONObject obj, int resource) throws SQLException;
 
     /**
      *
      * @param resource
      * @return Reads/Fetches an entity from the data source. Should return the
      * entity details in JSON fomat.
+     * @throws java.sql.SQLException
      */
-    public abstract JSONObject read(int resource);
+    public abstract JSONObject read(int resource) throws SQLException;
 
     /**
      *
      * @param resource
      * @return Deletes an entity from the data source. Should return a success
      * code in JSON format.
+     * @throws java.sql.SQLException
      */
-    public abstract JSONObject delete(int resource);
+    public abstract JSONObject delete(int resource) throws SQLException;
 }

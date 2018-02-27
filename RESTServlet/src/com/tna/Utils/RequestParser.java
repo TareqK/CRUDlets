@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.tna.RESTServlet;
+package com.tna.Utils;
 
 import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
@@ -15,9 +15,9 @@ import org.json.simple.parser.ParseException;
  *
  * @author tareq
  */
-class RequestParser {
+public class RequestParser {
 
-    protected static JSONObject parse(HttpServletRequest request) throws IOException, RequestParseException {//parse a request to json array
+    public static JSONObject parse(HttpServletRequest request) throws IOException, RequestParseException {//parse a request to json array
         Object obj;
         JSONObject array = null;
         JSONParser parser = new JSONParser();
@@ -30,7 +30,7 @@ class RequestParser {
         return array;
     }
 
-    protected static class RequestParseException extends Exception {
+    public static class RequestParseException extends Exception {
 
         public RequestParseException() {
             System.out.println("Wrong Request");

@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-import com.tna.RESTServlet.Endpoint;
+import com.tna.Endpoints.Endpoint;
 import javax.servlet.annotation.WebServlet;
 import org.json.simple.JSONObject;
 

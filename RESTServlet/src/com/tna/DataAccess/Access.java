@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.tna.RESTServlet;
+package com.tna.DataAccess;
 
 import java.sql.Connection;
 
@@ -21,18 +21,18 @@ import java.sql.SQLException;
  *
  * @author tareq
  */
-public class DBAccess {
+public class Access {
 
-    public static DBAccess access = DBAccess.getInstance();
-    public static Connection connection = DBAccess.connect();
+    public static Access access = Access.getInstance();
+    public static Connection connection = Access.connect();
     public String host = "localhost:3306";
     public String database = "test";
     public String username = "root";
     public String password = "pass1234";
 
-    public static DBAccess getInstance() {
+    public static Access getInstance() {
         if (access == null) {
-            return new DBAccess();
+            return new Access();
         } else {
             return access;
         }
@@ -40,27 +40,27 @@ public class DBAccess {
     
     
     public static Connection connect() {
-        if(DBAccess.access.connection == null){
+        if(Access.access.connection == null){
             
               System.out.println("no connection");
             try {
                 Class.forName("com.mysql.jdbc.Driver");
-                String uri = "jdbc:mysql://" + DBAccess.access.host + "/" + DBAccess.access.database + "?" + "user=" + DBAccess.access.username + "&password=" + DBAccess.access.password + "";
+                String uri = "jdbc:mysql://" + Access.access.host + "/" + Access.access.database + "?" + "user=" + Access.access.username + "&password=" + Access.access.password + "";
                 System.out.println(uri);
-                DBAccess.access.connection = DriverManager.getConnection(uri);
+                Access.access.connection = DriverManager.getConnection(uri);
 
             } catch (SQLException | ClassNotFoundException e) {
                 System.out.println("fail");
-                DBAccess.access.connection = null;
+                Access.access.connection = null;
             }
         }
         
-        return DBAccess.connection;
+        return Access.connection;
     }
 
-    protected DBAccess(){
+    protected Access(){
         
-        DBAccess access1 = DBAccess.access;
+        Access access1 = Access.access;
       
 
 }

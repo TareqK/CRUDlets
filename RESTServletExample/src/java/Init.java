@@ -1,6 +1,6 @@
 
-import com.tna.RESTServlet.DBAccess;
-import com.tna.RESTServlet.ServiceInitializer;
+import com.tna.DataAccess.Access;
+import com.tna.Utils.ServiceInitializer;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -16,11 +16,11 @@ public class Init extends ServiceInitializer{
 
     @Override
     public void onInit() {
-        DBAccess.host = "stuff";
-        DBAccess.database = "tayseer";
-        DBAccess.username = "mememe";
-        DBAccess.password = "Hello its me";
-        DBAccess.connect();
+        Access.host = "stuff";
+        Access.database = "tayseer";
+        Access.username = "mememe";
+        Access.password = "Hello its me";
+        Access.connect();
     }
 
     @Override

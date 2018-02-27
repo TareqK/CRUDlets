@@ -4,8 +4,8 @@
  * and open the template in the editor.
  */
 
-import com.tna.RESTServlet.Entity;
-import com.tna.RESTServlet.ObjectPersistedEntity;
+import com.tna.Entities.Entity;
+import com.tna.DataAccess.ObjectPersistence;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.util.logging.Level;
@@ -35,7 +35,7 @@ public class TestEntity extends Entity {
     public JSONObject create(JSONObject obj) {
         
         try {
-            ObjectPersistedEntity.writeJavaObject(this);
+            ObjectPersistence.writeJavaObject(this);
         } catch (Exception ex) {
             Logger.getLogger(TestEntity.class.getName()).log(Level.SEVERE, null, ex);
         }
