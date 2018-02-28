@@ -41,13 +41,13 @@ public class AuthenticatedTestEndpoint extends AuthorisedEndpoint{
     @Override
     public JSONObject doRead(JSONObject json, int resource) throws Authorisation.UnauthorisedException {
        new User().auth(json, 0);
-       return new TestEntity().delete(resource);    
+       return new TestEntity().read(resource);    
     }
 
     @Override
     public JSONObject doDelete(JSONObject json, int resource) throws Authorisation.UnauthorisedException {
        new User().auth(json, 1);
-       return new TestEntity().read(resource); 
+       return new TestEntity().delete(resource); 
     }
     
 }

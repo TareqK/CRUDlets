@@ -26,12 +26,12 @@ public abstract class AuthorisedEndpoint extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("application/json;charset=UTF-8");
-        JSONObject obj;
+        JSONObject json = new JSONObject();
+        JSONObject obj = new JSONObject();
         try {
             Integer resource = URLParser.parse(request);
-            JSONObject json = RequestParser.parse(request);
             try {
-                        if(request.getParameter("token")==null){
+                if(request.getParameter("token")==null){
                 throw new Authorisation.UnauthorisedException();
             }
             json.put("token", request.getParameter("token"));
@@ -46,7 +46,7 @@ public abstract class AuthorisedEndpoint extends HttpServlet {
                 return;
             }
 
-        } catch (URLParser.URLParseException | RequestParser.RequestParseException e) {
+        } catch (URLParser.URLParseException e) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);//send a bad request
             return;
         }

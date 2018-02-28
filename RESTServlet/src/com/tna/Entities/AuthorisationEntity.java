@@ -30,19 +30,26 @@ public abstract class AuthorisationEntity extends Entity {
     public JSONObject login(JSONObject obj) throws Authorisation.UnauthorisedException{
         try {
             PreparedStatement pstmt = Access.connection.prepareStatement(String.format(AuthorisationPersistence.GET_PASSWORD_SQL,this.getClass().getSimpleName()));
+            System.out.println(this.getClass().getSimpleName());
             pstmt.setObject(1, obj.get("userName"));
             ResultSet rs = pstmt.executeQuery();
             rs.next();
+            if(!rs.getString("password").equals(obj.get("password").toString())){
+                throw new Authorisation.UnauthorisedException();
+            }
             JSONObject json = new JSONObject();
-            json.put("token", rs.getString("token"));
             PreparedStatement pstmt2 = Access.connection.prepareStatement(String.format(AuthorisationPersistence.SET_TOKEN_SQL,this.getClass().getSimpleName()));
-            this.token = rs.getString("token");
-            pstmt.setInt(1, this.id);
-            pstmt.setString(2, this.token);
+            this.token = UUID.randomUUID().toString();
+            this.id = rs.getInt("id");
+            pstmt2.setString(1, this.token);
+            pstmt2.setInt(2, this.id);
+            
             pstmt2.execute();
+            json.put("token",this.token);
             return json;
             
         } catch (SQLException ex) {
+            System.out.println(ex);
             throw new Authorisation.UnauthorisedException();
     }
     }
@@ -55,8 +62,7 @@ public abstract class AuthorisationEntity extends Entity {
             ResultSet rs = pstmt.executeQuery();
             rs.next();
             JSONObject json = new JSONObject();
-            if(level<rs.getInt("privelege")){
-            }else{
+            if(level>rs.getInt("level")){
                 throw new Authorisation.UnauthorisedException();
             }
             
