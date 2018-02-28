@@ -6,7 +6,6 @@
 package com.tna.DataAccess;
 
 import java.sql.Connection;
-
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
@@ -46,8 +45,9 @@ public class Access {
                 System.out.println("fail");
                 Access.access.connection = null;
             }
+            
         }
-        
+        System.out.println("connected");
         return Access.connection;
     }
 

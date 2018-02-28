@@ -24,14 +24,14 @@ public class JSON {
     
     public static final String OK_CODE = "{\"success\":\"ok\"}";
     public static JSONObject objectToJSON(Object object){
-        JSONObject json = null;
+        JSONObject json = new JSONObject();
         Field[] fields = object.getClass().getDeclaredFields();
 
         for (Field field : fields) {
             try {
                 json.put(field.getName(),field.get(object));
             } catch (IllegalArgumentException | IllegalAccessException ex) {
-                Logger.getLogger(JSON.class.getName()).log(Level.SEVERE, null, ex);
+                return null;
             }
         }
         return json;

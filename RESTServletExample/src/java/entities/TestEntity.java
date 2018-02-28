@@ -15,7 +15,12 @@ import org.json.simple.JSONObject;
  *
  * @author tareq
  */
+
+    
 public class TestEntity extends Entity {
+
+    public long id;
+    public long id2;
 
     @Override
     public JSONObject list(){

@@ -2,7 +2,9 @@ package utils;
 
 
 import com.tna.DataAccess.Access;
-import com.tna.Utils.ServiceInitializer;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+import javax.servlet.annotation.WebListener;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -14,20 +16,36 @@ import com.tna.Utils.ServiceInitializer;
  *
  * @author tareq
  */
-public class Init extends ServiceInitializer{
 
-    @Override
+@WebListener 
+public class Init implements ServletContextListener {
+
+        public Init(){
+            
+        }
+    
+        @Override
+        public void contextInitialized(ServletContextEvent sce) {
+           onInit();
+           Access.connect();
+        }
+
+        @Override
+        public void contextDestroyed(ServletContextEvent sce) {
+           onDestroy();
+        }
+
     public void onInit() {
-        Access.access.host = "localhost:3306";
+        Access.access.host = "localhost";
         Access.access.database = "api_test";
-        Access.access.username = "api_user";
+        Access.access.username = "api_test";
         Access.access.password = "pass1234";
   
     }
 
-    @Override
+
     public void onDestroy() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
     }
     
 }
