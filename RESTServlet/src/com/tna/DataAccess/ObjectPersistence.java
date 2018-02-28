@@ -42,19 +42,18 @@ public abstract class ObjectPersistence implements Serializable {
 
     public JSONObject read(Object object, int id) throws Exception {
         String className = object.getClass().getSimpleName();
-        PreparedStatement pstmt = Access.connection.prepareStatement((String.format(READ_OBJECT_SQL, className)), Statement.RETURN_GENERATED_KEYS);
-
-        pstmt.setLong(1, id);
-        ResultSet rs = pstmt.executeQuery();
-        rs.next();
-        byte[] buf = rs.getBytes(1);
-        ObjectInputStream objectIn = null;
-        if (buf != null) {
-            objectIn = new ObjectInputStream(new ByteArrayInputStream(buf));
+        Object object2;
+        try (PreparedStatement pstmt = Access.connection.prepareStatement((String.format(READ_OBJECT_SQL, className)), Statement.RETURN_GENERATED_KEYS)) {
+            pstmt.setLong(1, id);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                rs.next();
+                byte[] buf = rs.getBytes(1);
+                ObjectInputStream objectIn = null;
+                if (buf != null) {
+                    objectIn = new ObjectInputStream(new ByteArrayInputStream(buf));
+                }   object2 = objectIn.readObject();
+            }
         }
-        Object object2 = objectIn.readObject();
-        rs.close();
-        pstmt.close();
         Field[] fields = object2.getClass().getDeclaredFields();
          for (Field field : fields) {
                 System.out.print("|"+field.get(object2)+"|");

@@ -29,12 +29,17 @@ public abstract class AuthorisationEntity extends Entity {
     
     public JSONObject login(JSONObject obj) throws Authorisation.UnauthorisedException{
         try {
-            PreparedStatement pstmt = Access.connection.prepareStatement(AuthorisationPersistence.GET_PASSWORD_SQL);
+            PreparedStatement pstmt = Access.connection.prepareStatement(String.format(AuthorisationPersistence.GET_PASSWORD_SQL,this.getClass().getSimpleName()));
             pstmt.setObject(1, obj.get("userName"));
             ResultSet rs = pstmt.executeQuery();
             rs.next();
             JSONObject json = new JSONObject();
             json.put("token", rs.getString("token"));
+            PreparedStatement pstmt2 = Access.connection.prepareStatement(String.format(AuthorisationPersistence.SET_TOKEN_SQL,this.getClass().getSimpleName()));
+            this.token = rs.getString("token");
+            pstmt.setInt(1, this.id);
+            pstmt.setString(2, this.token);
+            pstmt2.execute();
             return json;
             
         } catch (SQLException ex) {

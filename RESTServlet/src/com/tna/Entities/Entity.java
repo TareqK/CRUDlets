@@ -23,7 +23,7 @@ public abstract class Entity implements Serializable{
      * @return returns a list of all entries
      * @throws java.sql.SQLException
      */
-    public abstract JSONObject list() throws SQLException;
+    public abstract JSONObject list();
 
     /**
      *
@@ -32,7 +32,7 @@ public abstract class Entity implements Serializable{
      * code in JSON format.
      * @throws java.sql.SQLException
      */
-    public abstract JSONObject create(JSONObject obj) throws SQLException;
+    public abstract JSONObject create(JSONObject obj);
 
     /**
      *
@@ -42,7 +42,7 @@ public abstract class Entity implements Serializable{
      * code in JSON format.
      * @throws java.sql.SQLException
      */
-    public abstract JSONObject update(JSONObject obj, int resource) throws SQLException;
+    public abstract JSONObject update(JSONObject obj, int resource);
 
     /**
      *
@@ -51,7 +51,7 @@ public abstract class Entity implements Serializable{
      * entity details in JSON format.
      * @throws java.sql.SQLException
      */
-    public abstract JSONObject read(int resource) throws SQLException;
+    public abstract JSONObject read(int resource);
 
     /**
      *
@@ -60,5 +60,5 @@ public abstract class Entity implements Serializable{
      * code in JSON format.
      * @throws java.sql.SQLException
      */
-    public abstract JSONObject delete(int resource) throws SQLException;
+    public abstract JSONObject delete(int resource);
 }

@@ -5,4 +5,4 @@ A simple Java Library for creating CRUD REST web services using java servlets
 
 [Source Code](./RESTServlet/src/com/tna/)
 
-[Example Usage](./RESTServletExample/src/java)
+[Example Usage](./RESTServletExample/src/)
