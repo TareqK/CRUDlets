@@ -5,6 +5,9 @@
  */
 
 import com.tna.Endpoints.Endpoint;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.annotation.WebServlet;
 import org.json.simple.JSONObject;
 
@@ -17,28 +20,47 @@ public class TestEndpoint extends Endpoint {
 
     @Override
     public JSONObject doList() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            return new TestEntity().list();
+        } catch (SQLException ex) {
+            return null;
+        }
     }
 
     @Override
     public JSONObject doCreate(JSONObject obj) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            return new TestEntity().create(obj);
+        } catch (SQLException ex) {
+            return null;
+        }
     }
 
     @Override
     public JSONObject doUpdate(JSONObject obj, int resource) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            return new TestEntity().update(obj, resource);
+        } catch (SQLException ex) {
+            return null;
+        }
     }
 
     @Override
     public JSONObject doRead(int resource) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            return new TestEntity().read(resource);
+        } catch (SQLException ex) {
+            return null;
+        }
     }
 
     @Override
     public JSONObject doDelete(int resource) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            return new TestEntity().delete(resource);
+        } catch (SQLException ex) {
+            return null;
+        }
     }
 
-    
 }

@@ -6,6 +6,8 @@
 
 import com.tna.Entities.Entity;
 import com.tna.DataAccess.ObjectPersistence;
+import com.tna.DataAccess.Persistence;
+import com.tna.Utils.JSON;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -21,27 +23,29 @@ public class TestEntity extends Entity {
 
     @Override
     public JSONObject list() throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+       return Persistence.list(this);
     }
 
     @Override
     public JSONObject create(JSONObject obj) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+       JSON.JSONtoObject(this,obj);
+       return Persistence.create(this);
     }
 
     @Override
     public JSONObject update(JSONObject obj, int resource) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        JSON.JSONtoObject(this,obj);
+        return Persistence.update(this,resource);
     }
 
     @Override
     public JSONObject read(int resource) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+         return Persistence.read(this,resource);
     }
 
     @Override
     public JSONObject delete(int resource) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+       return Persistence.delete(this,resource);
     }
  
     

@@ -30,8 +30,12 @@ public abstract class AuthorisedEndpoint extends HttpServlet {
         try {
             Integer resource = URLParser.parse(request);
             JSONObject json = RequestParser.parse(request);
-            json.put("token", request.getParameter("token"));
             try {
+                        if(request.getParameter("token")==null){
+                throw new Authorisation.UnauthorisedException();
+            }
+            json.put("token", request.getParameter("token"));
+            
                 if (resource == null) {
                     obj = doList(json);
                 } else {
@@ -64,6 +68,9 @@ public abstract class AuthorisedEndpoint extends HttpServlet {
         JSONObject obj = null;
         try {
             JSONObject json = RequestParser.parse(request);
+            if(request.getParameter("token")==null){
+                throw new Authorisation.UnauthorisedException();
+            }
             json.put("token", request.getParameter("token"));
 
             obj = doCreate(json);
@@ -92,6 +99,9 @@ public abstract class AuthorisedEndpoint extends HttpServlet {
         try {
             Integer resource = URLParser.parse(request);
             JSONObject json = RequestParser.parse(request);
+            if(request.getParameter("token")==null){
+                throw new Authorisation.UnauthorisedException();
+            }
             json.put("token", request.getParameter("token"));
 
             if (resource == null) {
@@ -125,6 +135,9 @@ public abstract class AuthorisedEndpoint extends HttpServlet {
         try {
             Integer resource = URLParser.parse(request);
             JSONObject json = RequestParser.parse(request);
+            if(request.getParameter("token")==null){
+                throw new Authorisation.UnauthorisedException();
+            }
             json.put("token", request.getParameter("token"));
 
             if (resource == null) {

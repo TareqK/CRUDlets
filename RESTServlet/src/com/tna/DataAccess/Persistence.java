@@ -5,6 +5,7 @@
  */
 package com.tna.DataAccess;
 
+import com.tna.Utils.JSON;
 import java.lang.reflect.Field;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -52,7 +53,7 @@ public abstract class Persistence {
         } catch (SQLException e) {
             return null;
         }
-        return null;
+        return JSON.successResponse();
     }
 
     public static JSONObject read(Object object, int id) throws SQLException {
@@ -63,14 +64,14 @@ public abstract class Persistence {
         pstmt.setLong(1, id);
         ResultSet rs = pstmt.executeQuery();
         rs.next();
-         for (Field field : fields) {
+        for (Field field : fields) {
             try {
                 field.set(object, rs.getObject(field.getName()));
             } catch (IllegalArgumentException | IllegalAccessException ex) {
-               return null;
+                return null;
             }
         }
-       return null;
+        return JSON.objectToJSON(object);
     }
 
     public static JSONObject update(Object object, int id) throws SQLException {
@@ -81,7 +82,7 @@ public abstract class Persistence {
             values.append(field.getName()).append(" = ?,");
         }
         values.deleteCharAt((values.length() - 1));
-        PreparedStatement pstmt = Access.connection.prepareStatement((String.format(UPDATE_OBJECT_SQL, className , values.toString())), Statement.RETURN_GENERATED_KEYS);
+        PreparedStatement pstmt = Access.connection.prepareStatement((String.format(UPDATE_OBJECT_SQL, className, values.toString())), Statement.RETURN_GENERATED_KEYS);
         int i = 1;
         for (Field field : fields) {
             try {
@@ -90,7 +91,7 @@ public abstract class Persistence {
                 return null;
             }
             i++;
-            
+
         }
         pstmt.setObject(i, id);
         try {
@@ -100,7 +101,7 @@ public abstract class Persistence {
             return null;
         }
 
-        return null;
+        return JSON.successResponse();
     }
 
     public static JSONObject delete(Object object, int id) throws SQLException {
@@ -114,7 +115,7 @@ public abstract class Persistence {
         }
         ResultSet rs = pstmt.getGeneratedKeys();
         rs.next();
-        return null;
+        return JSON.successResponse();
 
     }
 
@@ -122,20 +123,37 @@ public abstract class Persistence {
         String className = object.getClass().getSimpleName();
         PreparedStatement pstmt = Access.connection.prepareStatement((String.format(LIST_OBJECT_SQL, className)), Statement.RETURN_GENERATED_KEYS);
         ResultSet rs = pstmt.executeQuery();
-        System.out.println(rs);
+        Field[] fields = object.getClass().getDeclaredFields();
+
+        JSONObject obj = new JSONObject();
         try {
+            int i = 1;
             while (rs.next()) {
-                Field[] fields = object.getClass().getDeclaredFields();
+
                 for (Field field : fields) {
-                    System.out.print("|" + rs.getObject(field.getName()) + "|");
+                    try {
+                        field.set(object, rs.getObject(field.getName()));
+                    } catch (IllegalArgumentException | IllegalAccessException ex) {
+                        return null;
+                    }
+
                 }
-                System.out.println("");
+                obj.put(+i, JSON.objectToJSON(object));
+                i++;
             }
         } catch (SQLException e) {
             rs.close();
             pstmt.close();
+            return null;
         }
-        return null;
+        for (Field field : fields) {
+            try {
+                field.set(object, null);
+            } catch (IllegalArgumentException | IllegalAccessException ex) {
+            }
+
+        }
+        return obj;
 
     }
 

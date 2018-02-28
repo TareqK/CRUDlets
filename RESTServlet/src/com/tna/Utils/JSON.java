@@ -6,16 +6,23 @@
 package com.tna.Utils;
 
 import java.lang.reflect.Field;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 /**
  *
  * @author tareq
  */
+
+
+
 public class JSON {
     
+    public static final String OK_CODE = "{\"success\":\"ok\"}";
     public static JSONObject objectToJSON(Object object){
         JSONObject json = null;
         Field[] fields = object.getClass().getDeclaredFields();
@@ -41,5 +48,15 @@ public class JSON {
             }
         }
     }
+    public static JSONObject successResponse(){
+     JSONParser parser = new JSONParser();
+        try {
+            return (JSONObject)parser.parse(OK_CODE);
+        } catch (ParseException ex) {
+             return null;
+        }
+    }
+   
+    }
     
-}
+

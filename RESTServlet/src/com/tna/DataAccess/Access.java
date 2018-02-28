@@ -52,9 +52,9 @@ public class Access {
     }
 
     protected Access(){
-        
-        Access access1 = Access.access;
+    
+    }
       
 
-}
+
 }

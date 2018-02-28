@@ -5,6 +5,7 @@
  */
 package com.tna.Utils;
 
+import com.tna.DataAccess.Access;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
@@ -19,7 +20,9 @@ import javax.servlet.annotation.WebListener;
 
         @Override
         public void contextInitialized(ServletContextEvent sce) {
+            
            onInit();
+           Access.connect();
         }
 
         @Override
