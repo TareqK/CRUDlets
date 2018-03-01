@@ -27,6 +27,8 @@ public abstract class Persistence {
     static final String LIST_OBJECT_SQL = "SELECT * FROM %s";
 
     public static JSONObject create(Object object) {
+        JSONObject response = JSON.successResponse();
+
         try {
             String className = object.getClass().getSimpleName();
             Field[] fields = object.getClass().getDeclaredFields();
@@ -50,10 +52,17 @@ public abstract class Persistence {
             }
 
             pstmt.execute();
+            ResultSet rs = pstmt.getGeneratedKeys();
+            rs.next();
+            response.put("key", rs.getLong(1));
+
         } catch (SQLException e) {
+            System.out.println(e);
             return null;
+
         }
-        return JSON.successResponse();
+        return response;
+
     }
 
     public static JSONObject read(Object object, int id) {
@@ -72,6 +81,8 @@ public abstract class Persistence {
                 }
             }
         } catch (SQLException e) {
+            System.out.println(e);
+
             return null;
         }
         return JSON.objectToJSON(object);
@@ -99,6 +110,8 @@ public abstract class Persistence {
             pstmt.setObject(i, id);
             pstmt.execute();
         } catch (SQLException e) {
+            System.out.println(e);
+
             return null;
         }
 
@@ -106,6 +119,7 @@ public abstract class Persistence {
     }
 
     public static JSONObject delete(Object object, int id) {
+        JSONObject response = JSON.successResponse();
         try {
             String className = object.getClass().getSimpleName();
             PreparedStatement pstmt = Access.connection.prepareStatement((String.format(DELETE_OBJECT_SQL, className)), Statement.RETURN_GENERATED_KEYS);
@@ -116,14 +130,16 @@ public abstract class Persistence {
             ResultSet rs = pstmt.getGeneratedKeys();
             rs.next();
         } catch (SQLException e) {
+            System.out.println(e);
+
             return null;
         }
-        return JSON.successResponse();
+        return response;
 
     }
 
-    public static JSONObject list(Object object){
-       
+    public static JSONObject list(Object object) {
+
         JSONObject obj = new JSONObject();
         try {
             String className = object.getClass().getSimpleName();
@@ -131,9 +147,6 @@ public abstract class Persistence {
             ResultSet rs = pstmt.executeQuery();
             Field[] fields = object.getClass().getDeclaredFields();
 
-            
-
-            int i = 1;
             while (rs.next()) {
 
                 for (Field field : fields) {
@@ -143,8 +156,7 @@ public abstract class Persistence {
                     }
 
                 }
-                obj.put(+i, JSON.objectToJSON(object));
-                i++;
+                obj.put(rs.getObject("id"), JSON.objectToJSON(object));
             }
 
             for (Field field : fields) {
@@ -155,6 +167,8 @@ public abstract class Persistence {
 
             }
         } catch (SQLException e) {
+            System.out.println(e);
+
             return null;
         }
         return obj;

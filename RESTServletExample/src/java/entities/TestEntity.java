@@ -19,7 +19,6 @@ import org.json.simple.JSONObject;
     
 public class TestEntity extends Entity {
 
-    public long id;
     public long id2;
 
     @Override
