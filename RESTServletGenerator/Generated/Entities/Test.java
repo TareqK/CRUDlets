@@ -1,4 +1,4 @@
-package $EntityPackage;
+package Endpoints;
 
 import com.tna.Entities.Entity;
 import com.tna.DataAccess.Persistence;
@@ -8,7 +8,7 @@ import org.json.simple.JSONObject;
 
 
     
-public class $EntityName extends Entity {
+public class Test extends Entity {
 
 
     @Override

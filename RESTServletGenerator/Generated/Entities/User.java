@@ -1,17 +1,12 @@
-package $EntityPackage;
+package Entities;
 
-import com.tna.Entities.Entity;
-import com.tna.DataAccess.Persistence;
-import com.tna.Utils.JSON;
+
+import com.tna.Entities.AuthorisationEntity;
 import org.json.simple.JSONObject;
 
-
-
-    
-public class $EntityName extends Entity {
-
-
-    @Override
+public class User extends AuthorisationEntity {
+	
+	@Override
     public JSONObject list(){
        return Persistence.list(this);
     }
@@ -37,6 +32,6 @@ public class $EntityName extends Entity {
     public JSONObject delete(int resource){
        return Persistence.delete(this,resource);
     }
- 
     
+
 }
