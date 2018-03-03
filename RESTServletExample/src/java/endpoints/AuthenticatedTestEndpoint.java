@@ -23,7 +23,7 @@ public class AuthenticatedTestEndpoint extends AuthorisedEndpoint{
 
     @Override
     public JSONObject doList(JSONObject obj) throws Authorisation.UnauthorisedException {
-       new User().auth(obj, 1);
+       new User().auth(obj, 100);
        return new TestEntity().list();
     }
 
@@ -35,19 +35,23 @@ public class AuthenticatedTestEndpoint extends AuthorisedEndpoint{
 
     @Override
     public JSONObject doUpdate(JSONObject json, int resource) throws Authorisation.UnauthorisedException {
-        new User().auth(json, 1);
-        return new TestEntity().update(json,resource);     }
+        TestEntity te = new TestEntity();
+        new User().auth(json, 1 , resource , te );
+        return te.update(json, resource);
+    }
 
     @Override
     public JSONObject doRead(JSONObject json, int resource) throws Authorisation.UnauthorisedException {
-       new User().auth(json, 0);
-       return new TestEntity().read(resource);    
+        TestEntity te = new TestEntity();
+        new User().auth(json, 1 , resource , te );
+        return te.read(resource);    
     }
 
     @Override
     public JSONObject doDelete(JSONObject json, int resource) throws Authorisation.UnauthorisedException {
-       new User().auth(json, 1);
-       return new TestEntity().delete(resource); 
+        TestEntity te = new TestEntity();
+        new User().auth(json, 1 , resource , te );
+        return te.delete(resource); 
     }
     
 }

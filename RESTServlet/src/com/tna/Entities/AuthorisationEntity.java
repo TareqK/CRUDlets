@@ -46,6 +46,7 @@ public abstract class AuthorisationEntity extends Entity {
             
             pstmt2.execute();
             json.put("token",this.token);
+            json.put("id",this.id);
             return json;
             
         } catch (SQLException ex) {
@@ -60,12 +61,14 @@ public abstract class AuthorisationEntity extends Entity {
         }
         try {
             PreparedStatement pstmt;
-            pstmt = Access.connection.prepareStatement(String.format(AuthorisationPersistence.GET_PRIVILEGE_SQL,this.getClass().getSimpleName()));
+            pstmt = Access.connection.prepareStatement(String.format(AuthorisationPersistence.GET_PRIVILEGE_AND_ID_SQL,this.getClass().getSimpleName()));
             pstmt.setObject(1, obj.get("token"));
             ResultSet rs = pstmt.executeQuery();
             rs.next();
             JSONObject json = new JSONObject();
-            if(level>rs.getInt("level")){
+            if(rs.getInt("level")==999){
+                return;
+            }else if(level>rs.getInt("level")){
                 throw new Authorisation.UnauthorisedException();
             }
             
@@ -74,7 +77,33 @@ public abstract class AuthorisationEntity extends Entity {
     }
         
     }
+    
+    public void auth(JSONObject obj, int level, int resource, Object object) throws Authorisation.UnauthorisedException {
+        if(level<=0){
+            return;      
+        }
+        try {
+            PreparedStatement pstmt;
+            pstmt = Access.connection.prepareStatement(String.format(AuthorisationPersistence.GET_PRIVILEGE_AND_ID_SQL,this.getClass().getSimpleName()));
+            pstmt.setObject(1, obj.get("token"));
+            ResultSet rs = pstmt.executeQuery();
+            rs.next();
+            if(level>rs.getInt("level")){
+                throw new Authorisation.UnauthorisedException();
+            }
+            PreparedStatement pstmt2;
+            pstmt2 = Access.connection.prepareStatement(String.format(AuthorisationPersistence.READ_OBJECT_USER_SQL,object.getClass().getSimpleName()));
+            pstmt2.setObject(1, resource);
+            ResultSet rs2 = pstmt2.executeQuery();
+            rs2.next();
+            if(rs.getLong("id")!=rs2.getLong("user")){
+                 throw new Authorisation.UnauthorisedException();
+            }
+            
+        } catch (SQLException ex) {
+            throw new Authorisation.UnauthorisedException();
+    }
 
 
-  
+    }
 }

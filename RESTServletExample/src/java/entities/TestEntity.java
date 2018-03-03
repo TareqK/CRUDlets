@@ -8,6 +8,7 @@ package entities;
 
 import com.tna.Entities.Entity;
 import com.tna.DataAccess.Persistence;
+import com.tna.Entities.AuthenticatedEntity;
 import com.tna.Utils.JSON;
 import org.json.simple.JSONObject;
 
@@ -17,7 +18,7 @@ import org.json.simple.JSONObject;
  */
 
     
-public class TestEntity extends Entity {
+public class TestEntity extends AuthenticatedEntity {
 
     public long id2;
 

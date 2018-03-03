@@ -18,13 +18,14 @@ import org.json.simple.JSONObject;
  * @author tareq
  *
  */
-public abstract class Persistence {
+public class Persistence {
 
     static final String CREATE_OBJECT_SQL = "INSERT INTO %s (%s) VALUES (%s) ";
     static final String READ_OBJECT_SQL = "SELECT * FROM %s WHERE id = ?";
     static final String UPDATE_OBJECT_SQL = "UPDATE %s SET %s where id = ?";
     static final String DELETE_OBJECT_SQL = "DELETE FROM %s WHERE id = ?";
     static final String LIST_OBJECT_SQL = "SELECT * FROM %s";
+    
 
     public static JSONObject create(Object object) {
         JSONObject response = JSON.successResponse();

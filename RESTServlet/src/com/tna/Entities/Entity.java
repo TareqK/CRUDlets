@@ -15,7 +15,7 @@ import org.json.simple.JSONObject;
  *
  */
 
-public abstract class Entity implements Serializable{
+public abstract class Entity{
 
     /**
      *
