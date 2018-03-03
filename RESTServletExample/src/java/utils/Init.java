@@ -36,10 +36,10 @@ public class Init implements ServletContextListener {
         }
 
     public void onInit() {
-        Access.access.host = "localhost";
-        Access.access.database = "api_test";
-        Access.access.username = "api_test";
-        Access.access.password = "pass1234";
+        Access.host = "localhost";
+        Access.database = "api_test";
+        Access.username = "api_test";
+        Access.password = "pass1234";
   
     }
 
