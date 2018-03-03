@@ -37,9 +37,10 @@ public class Access {
               System.out.println("no connection");
             try {
                 Class.forName("com.mysql.jdbc.Driver");
-                String uri = "jdbc:mysql://" + Access.host + "/" + Access.database + "?" + "user=" + Access.username + "&password=" + Access.password + "";
+                String uri = "jdbc:mysql://" + Access.host + "/" + Access.database + "?" + "user=" + Access.username + "&password=" + Access.password + "&autoReconnect=true";
                 System.out.println(uri);
                 Access.connection = DriverManager.getConnection(uri);
+                
 
             } catch (SQLException | ClassNotFoundException e) {
                 System.out.println("fail");
