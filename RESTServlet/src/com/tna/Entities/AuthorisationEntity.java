@@ -55,7 +55,7 @@ public abstract class AuthorisationEntity extends Entity {
     }
     }
         
-    public void auth(JSONObject obj, int level) throws Authorisation.UnauthorisedException {
+    public void authOperation(JSONObject obj, int level) throws Authorisation.UnauthorisedException {
         if(level<=0){
             return;      
         }
@@ -78,10 +78,7 @@ public abstract class AuthorisationEntity extends Entity {
         
     }
     
-    public void auth(JSONObject obj, int level, int resource, Object object) throws Authorisation.UnauthorisedException {
-        if(level<=0){
-            return;      
-        }
+    public void authAccess(JSONObject obj , int resource, Object object) throws Authorisation.UnauthorisedException {
         try {
             PreparedStatement pstmt;
             pstmt = Access.connection.prepareStatement(String.format(AuthorisationPersistence.GET_PRIVILEGE_AND_ID_SQL,this.getClass().getSimpleName()));

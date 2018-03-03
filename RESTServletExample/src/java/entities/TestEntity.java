@@ -29,24 +29,24 @@ public class TestEntity extends AuthenticatedEntity {
 
     @Override
     public JSONObject create(JSONObject obj){
-       JSON.JSONtoObject(this,obj);
-       return Persistence.create(this);
+       JSON.JSONtoObject(this, obj);
+       return Persistence.create(this.getClass(),obj);
     }
 
     @Override
     public JSONObject update(JSONObject obj, int resource){
         JSON.JSONtoObject(this,obj);
-        return Persistence.update(this,resource);
+        return Persistence.update(this.getClass(),resource,obj);
     }
 
     @Override
     public JSONObject read(int resource){
-         return Persistence.read(this,resource);
+         return Persistence.read(this.getClass(),resource);
     }
 
     @Override
     public JSONObject delete(int resource){
-       return Persistence.delete(this,resource);
+       return Persistence.delete(this.getClass(),resource);
     }
  
     

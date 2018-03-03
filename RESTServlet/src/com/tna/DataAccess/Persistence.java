@@ -27,12 +27,12 @@ public class Persistence {
     static final String LIST_OBJECT_SQL = "SELECT * FROM %s";
     
 
-    public static JSONObject create(Object object) {
+    public static JSONObject create(Class object,JSONObject json) {
         JSONObject response = JSON.successResponse();
 
         try {
-            String className = object.getClass().getSimpleName();
-            Field[] fields = object.getClass().getDeclaredFields();
+            String className = object.getSimpleName();
+            Field[] fields = object.getDeclaredFields();
             StringBuilder columns = new StringBuilder();
             StringBuilder values = new StringBuilder();
             for (Field field : fields) {
@@ -46,8 +46,8 @@ public class Persistence {
             int i = 1;
             for (Field field : fields) {
                 try {
-                    pstmt.setObject(i, field.get(object));
-                } catch (IllegalArgumentException | IllegalAccessException ex) {
+                    pstmt.setObject(i, json.get(field.getName()));
+                } catch (IllegalArgumentException ex) {
                 }
                 i++;
             }
@@ -66,33 +66,34 @@ public class Persistence {
 
     }
 
-    public static JSONObject read(Object object, int id) {
+    public static JSONObject read(Class object, long id) {
+        JSONObject obj = new JSONObject();
         try {
-            String className = object.getClass().getSimpleName();
+            String className = object.getSimpleName();
             PreparedStatement pstmt;
             pstmt = Access.connection.prepareStatement((String.format(READ_OBJECT_SQL, className)), Statement.RETURN_GENERATED_KEYS);
-            Field[] fields = object.getClass().getDeclaredFields();
+            Field[] fields = object.getDeclaredFields();
             pstmt.setLong(1, id);
             ResultSet rs = pstmt.executeQuery();
+           
             rs.next();
             for (Field field : fields) {
                 try {
-                    field.set(object, rs.getObject(field.getName()));
-                } catch (IllegalArgumentException | IllegalAccessException ex) {
+                    obj.put(field.getName(), rs.getObject(field.getName()));
+                } catch (IllegalArgumentException ex) {
                 }
             }
         } catch (SQLException e) {
             System.out.println(e);
-
             return null;
         }
-        return JSON.objectToJSON(object);
+        return obj;
     }
 
-    public static JSONObject update(Object object, int id) {
+    public static JSONObject update(Class object, int id, JSONObject json) {
         try {
-            String className = object.getClass().getSimpleName();
-            Field[] fields = object.getClass().getDeclaredFields();
+            String className = object.getSimpleName();
+            Field[] fields = object.getDeclaredFields();
             StringBuilder values = new StringBuilder();
             for (Field field : fields) {
                 values.append(field.getName()).append(" = ?,");
@@ -102,8 +103,8 @@ public class Persistence {
             int i = 1;
             for (Field field : fields) {
                 try {
-                    pstmt.setObject(i, field.get(object));
-                } catch (IllegalArgumentException | IllegalAccessException ex) {
+                    pstmt.setObject(i, json.get(field.getName()));
+                } catch (IllegalArgumentException ex) {
                 }
                 i++;
 
@@ -119,10 +120,10 @@ public class Persistence {
         return JSON.successResponse();
     }
 
-    public static JSONObject delete(Object object, int id) {
+    public static JSONObject delete(Class object, int id) {
         JSONObject response = JSON.successResponse();
         try {
-            String className = object.getClass().getSimpleName();
+            String className = object.getSimpleName();
             PreparedStatement pstmt = Access.connection.prepareStatement((String.format(DELETE_OBJECT_SQL, className)), Statement.RETURN_GENERATED_KEYS);
             pstmt.setInt(1, id);
 

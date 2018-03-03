@@ -1,6 +1,8 @@
 package endpoints;
 
 
+import com.tna.DataAccess.AuthorisationPersistence;
+import com.tna.DataAccess.Persistence;
 import entities.User;
 import entities.TestEntity;
 import com.tna.Endpoints.AuthorisedEndpoint;
@@ -23,34 +25,28 @@ public class AuthenticatedTestEndpoint extends AuthorisedEndpoint{
 
     @Override
     public JSONObject doList(JSONObject obj) throws Authorisation.UnauthorisedException {
-       new User().auth(obj, 100);
-       return new TestEntity().list();
+       return AuthorisationPersistence.list(TestEntity.class,User.class,obj);
     }
 
     @Override
     public JSONObject doCreate(JSONObject json) throws Authorisation.UnauthorisedException {
-        new User().auth(json, 1);
         return new TestEntity().create(json); 
     }
 
     @Override
     public JSONObject doUpdate(JSONObject json, int resource) throws Authorisation.UnauthorisedException {
         TestEntity te = new TestEntity();
-        new User().auth(json, 1 , resource , te );
         return te.update(json, resource);
     }
 
     @Override
     public JSONObject doRead(JSONObject json, int resource) throws Authorisation.UnauthorisedException {
-        TestEntity te = new TestEntity();
-        new User().auth(json, 1 , resource , te );
-        return te.read(resource);    
+        return AuthorisationPersistence.read(TestEntity.class,User.class,json,resource);  
     }
 
     @Override
     public JSONObject doDelete(JSONObject json, int resource) throws Authorisation.UnauthorisedException {
         TestEntity te = new TestEntity();
-        new User().auth(json, 1 , resource , te );
         return te.delete(resource); 
     }
     
