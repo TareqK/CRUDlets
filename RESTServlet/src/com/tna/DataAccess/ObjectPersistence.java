@@ -107,9 +107,7 @@ public abstract class ObjectPersistence implements Serializable {
            
             Field[] fields = object2.getClass().getDeclaredFields();
             for (Field field : fields) {
-                System.out.print("|"+field.get(object2)+"|");
             }
-            System.out.println("");
         }
         }catch(SQLException e){
         rs.close();

@@ -16,7 +16,7 @@ import org.json.simple.JSONObject;
  */
 
 public abstract class Entity{
-
+    public long id;
     /**
      *
      *

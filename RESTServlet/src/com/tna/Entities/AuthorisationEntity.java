@@ -21,7 +21,6 @@ import java.util.UUID;
  */
 public abstract class AuthorisationEntity extends Entity {
     
-    public int id;
     public String userName;
     public String password;
     public String token;
@@ -42,7 +41,7 @@ public abstract class AuthorisationEntity extends Entity {
             this.token = UUID.randomUUID().toString();
             this.id = rs.getInt("id");
             pstmt2.setString(1, this.token);
-            pstmt2.setInt(2, this.id);
+            pstmt2.setLong(2, this.id);
             
             pstmt2.execute();
             json.put("token",this.token);

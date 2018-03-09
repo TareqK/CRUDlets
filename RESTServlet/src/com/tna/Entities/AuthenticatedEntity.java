@@ -10,6 +10,7 @@ package com.tna.Entities;
  * @author tareq
  */
 public abstract class AuthenticatedEntity extends Entity{
+    
     public long user;
     
 }
