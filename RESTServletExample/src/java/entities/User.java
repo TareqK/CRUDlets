@@ -1,7 +1,7 @@
 package entities;
 
 
-import com.tna.Entities.AuthorisationEntity;
+import com.tna.entities.AuthenticationEntity;
 import org.json.simple.JSONObject;
 
 /*
@@ -14,7 +14,7 @@ import org.json.simple.JSONObject;
  *
  * @author tareq
  */
-public class User extends AuthorisationEntity {
+public class User extends AuthenticationEntity {
 
     @Override
     public JSONObject list() {
@@ -40,6 +40,8 @@ public class User extends AuthorisationEntity {
     public JSONObject delete(int resource) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+   
     
 
 }

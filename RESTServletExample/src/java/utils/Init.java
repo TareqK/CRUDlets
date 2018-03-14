@@ -1,7 +1,7 @@
 package utils;
 
 
-import com.tna.DataAccess.Access;
+import com.tna.data.Access;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;

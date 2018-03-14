@@ -6,9 +6,13 @@ package endpoints;
  * and open the template in the editor.
  */
 
+import com.tna.data.Persistence;
+import com.tna.endpoints.BasicEndpoint;
 import entities.TestEntity;
-import com.tna.Endpoints.Endpoint;
 import javax.servlet.annotation.WebServlet;
+import javax.websocket.Endpoint;
+import javax.websocket.EndpointConfig;
+import javax.websocket.Session;
 import org.json.simple.JSONObject;
 
 /**
@@ -16,38 +20,35 @@ import org.json.simple.JSONObject;
  * @author tareq
  */
 @WebServlet("/test/*")
-public class TestEndpoint extends Endpoint {
+public class TestEndpoint extends BasicEndpoint {
 
     @Override
     public JSONObject doList() {
-            return new TestEntity().list();
-
+       return Persistence.list(TestEntity.class);
     }
 
     @Override
     public JSONObject doCreate(JSONObject obj) {
-            return new TestEntity().create(obj);
- 
+       return  Persistence.create(TestEntity.class,obj);
     }
+    
+    
 
     @Override
     public JSONObject doUpdate(JSONObject obj, int resource) {
-            return new TestEntity().update(obj, resource);
- 
+       return Persistence.update(TestEntity.class,resource,obj);
     }
 
     @Override
     public JSONObject doRead(int resource) {
-            return new TestEntity().read(resource);
-     
-            
-
+        return Persistence.read(TestEntity.class, resource);
     }
 
     @Override
     public JSONObject doDelete(int resource) {
-            return new TestEntity().delete(resource);
-
+        return Persistence.delete(TestEntity.class, resource);
     }
+
+
 
 }

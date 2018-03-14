@@ -75,7 +75,7 @@ public class JSON {
     }
     
     /**
-     * Creats a simple failure message.
+     * Creates a simple failure message.
      * @return returns a JSONObject with a failure message.
      */
     public static JSONObject failResponse(){

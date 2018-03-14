@@ -6,10 +6,8 @@ package entities;
  * and open the template in the editor.
  */
 
-import com.tna.Entities.Entity;
-import com.tna.DataAccess.Persistence;
-import com.tna.Entities.AuthenticatedEntity;
-import com.tna.Utils.JSON;
+
+import com.tna.entities.AuthorisedEntity;
 import org.json.simple.JSONObject;
 
 /**
@@ -18,36 +16,34 @@ import org.json.simple.JSONObject;
  */
 
     
-public class TestEntity extends AuthenticatedEntity {
+public class TestEntity extends AuthorisedEntity {
 
     public long id2;
 
     @Override
-    public JSONObject list(){
-       return Persistence.list(this);
+    public JSONObject list() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public JSONObject create(JSONObject obj){
-       JSON.JSONtoObject(this, obj);
-       return Persistence.create(this.getClass(),obj);
+    public JSONObject create(JSONObject obj) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public JSONObject update(JSONObject obj, int resource){
-        JSON.JSONtoObject(this,obj);
-        return Persistence.update(this.getClass(),resource,obj);
+    public JSONObject update(JSONObject obj, int resource) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public JSONObject read(int resource){
-         return Persistence.read(this.getClass(),resource);
+    public JSONObject read(int resource) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public JSONObject delete(int resource){
-       return Persistence.delete(this.getClass(),resource);
+    public JSONObject delete(int resource) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
- 
+
     
 }

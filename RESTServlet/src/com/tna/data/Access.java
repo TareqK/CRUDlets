@@ -37,7 +37,10 @@ public class Access {
         }
     }
     
-    
+    /**
+     * A method to create or get a data base connection.
+     * @return returns a connection object or null.
+     */
     public static Connection connect() {
         if(Access.connection == null){
             
@@ -60,6 +63,9 @@ public class Access {
         return Access.connection;
     }
 
+    /**
+     * The default constructor. Returns a new instance of Access.
+     */
     protected Access(){
     
     }
