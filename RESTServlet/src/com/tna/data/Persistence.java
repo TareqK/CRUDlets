@@ -5,6 +5,7 @@
  */
 package com.tna.data;
 
+import com.tna.common.Authorisation;
 import com.tna.utils.JSON;
 import java.lang.reflect.Field;
 import java.sql.PreparedStatement;
@@ -14,6 +15,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Set;
+import java.util.UUID;
 import org.json.simple.JSONObject;
 
 /**
@@ -241,29 +243,29 @@ public class Persistence {
      * first one.
      *
      * @param object
-     * @param properties
-     * @param values
+     * @param json
      * @return returns a JSONObject of the first object fulfilling this
      * criteria.
      */
-    public static JSONObject readByProperties(Class object, String[] properties, Object[] values) {
+    public static JSONObject readByProperties(Class object, JSONObject json) {
 
         JSONObject result = new JSONObject();
 
         try {
-            if (properties.length != values.length) {
-                throw new SQLException();
-            }
-            StringBuilder valuesString = new StringBuilder();
-            for (int i = 0; i < properties.length; i++) {
-                try {
-                    object.getDeclaredField(properties[i]);
-                    valuesString.append(properties[i]);
 
+            StringBuilder valuesString = new StringBuilder();
+            Set keys = json.keySet();
+            int i = 0;
+            int length = keys.size();
+            for (Object key : keys) {
+                try {
+                    object.getDeclaredField(key.toString());
+                    valuesString.append(key.toString());
                     valuesString.append(" = ?");
-                    if (i < properties.length - 1) {
+                    if (i < length - 1) {
                         valuesString.append(" and ");
                     }
+                    i++;
                 } catch (NoSuchFieldException | SecurityException ex) {
                     throw new SQLException();
                 }
@@ -272,9 +274,9 @@ public class Persistence {
 
             String className = object.getSimpleName();
             PreparedStatement pstmt = Access.connection.prepareStatement((String.format(SEARCH_BY_PROPERTY_SQL, className, valuesString.toString())), Statement.RETURN_GENERATED_KEYS);
-            int i = 1;
-            for (Object o : values) {
-                pstmt.setObject(i, o.toString());
+            i = 1;
+            for (Object key : keys) {
+                pstmt.setObject(i, json.get(key));
                 i++;
             }
             ResultSet rs = pstmt.executeQuery();
@@ -303,27 +305,28 @@ public class Persistence {
      * of them all.
      *
      * @param object
-     * @param properties
-     * @param values
+     * @param json
      * @return returns a JSONObject of all the objects fulfilling this criteria.
      */
-    public static JSONObject listByProperties(Class object, String[] properties, Object[] values) {
+    public static JSONObject listByProperties(Class object, JSONObject json) {
 
         JSONObject result = new JSONObject();
 
         try {
-            if (properties.length != values.length) {
-                throw new SQLException();
-            }
+
             StringBuilder valuesString = new StringBuilder();
-            for (int i = 0; i < properties.length; i++) {
+            Set keys = json.keySet();
+            int i = 0;
+            int length = keys.size();
+            for (Object key : keys) {
                 try {
-                    object.getDeclaredField(properties[i]);
-                    valuesString.append(properties[i]);
+                    object.getDeclaredField(key.toString());
+                    valuesString.append(key.toString());
                     valuesString.append(" = ?");
-                    if (i < properties.length - 1) {
+                    if (i < length - 1) {
                         valuesString.append(" and ");
                     }
+                    i++;
                 } catch (NoSuchFieldException | SecurityException ex) {
                     throw new SQLException();
                 }
@@ -332,9 +335,9 @@ public class Persistence {
 
             String className = object.getSimpleName();
             PreparedStatement pstmt = Access.connection.prepareStatement((String.format(SEARCH_BY_PROPERTY_SQL, className, valuesString.toString())), Statement.RETURN_GENERATED_KEYS);
-            int i = 1;
-            for (Object o : values) {
-                pstmt.setObject(i, o.toString());
+            i = 1;
+            for (Object key : keys) {
+                pstmt.setObject(i, json.get(key));
                 i++;
             }
             ResultSet rs = pstmt.executeQuery();
@@ -562,4 +565,5 @@ public class Persistence {
         }
         return (fields.toArray(new Field[fields.size()]));
     }
+
 }

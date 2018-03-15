@@ -29,10 +29,8 @@ public class Access {
      */
     public static Access getInstance() {
         if (access == null) {
-            Access.connect();
             return new Access();
         } else {
-            
             return access;
         }
     }
@@ -42,25 +40,22 @@ public class Access {
      * @return returns a connection object or null.
      */
     public static Connection connect() {
-        if(Access.connection == null){
-            
+        if(connection == null){
               System.out.println("no connection");
             try {
-
                 Class.forName("com.mysql.jdbc.Driver");
                 String uri = "jdbc:mysql://" + Access.host + "/" + Access.database + "?" + "user=" + Access.username + "&password=" + Access.password + "&autoReconnect=true";
                 System.out.println(uri);
-                Access.connection = DriverManager.getConnection(uri);
+                System.out.println("connected");
+                return DriverManager.getConnection(uri);
                 
 
             } catch (SQLException | ClassNotFoundException e) {
                 System.out.println("fail");
-                Access.connection = null;
-            }
-            
-        }
-        System.out.println("connected");
-        return Access.connection;
+                return null;
+            }       
+        }   
+        return connection;    
     }
 
     /**

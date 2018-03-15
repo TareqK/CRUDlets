@@ -9,6 +9,7 @@
             <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/data/Persistence.java</file>
             <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/endpoints/AuthorisedEndpoint.java</file>
             <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/endpoints/AuthenticationEndpoint.java</file>
+            <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/endpoints/BasicEndpoint.java</file>
             <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/common/Authorisation.java</file>
             <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/utils/JSON.java</file>
             <file>file:/home/tareq/Code/Java-Rest-Servlet/RESTServlet/src/com/tna/data/Access.java</file>
