@@ -29,6 +29,7 @@ public class Access {
      */
     public static Access getInstance() {
         if (access == null) {
+            Access.connect();
             return new Access();
         } else {
             return access;
@@ -47,15 +48,17 @@ public class Access {
                 String uri = "jdbc:mysql://" + Access.host + "/" + Access.database + "?" + "user=" + Access.username + "&password=" + Access.password + "&autoReconnect=true";
                 System.out.println(uri);
                 System.out.println("connected");
-                return DriverManager.getConnection(uri);
+                Connection conn =  DriverManager.getConnection(uri);
+                Access.connection = conn;
                 
 
             } catch (SQLException | ClassNotFoundException e) {
                 System.out.println("fail");
+                Access.connection = null;
                 return null;
             }       
         }   
-        return connection;    
+        return  Access.connection;    
     }
 
     /**

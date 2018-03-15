@@ -5,7 +5,7 @@
  */
 package com.tna.endpoints;
 
-import com.tna.common.Authorisation;
+import com.tna.common.UserAccessControl;
 import com.tna.utils.Parser;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -21,6 +21,13 @@ import org.json.simple.JSONObject;
  */
 public abstract class AuthorisedEndpoint extends HttpServlet {
 
+    /**
+     *
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -31,7 +38,7 @@ public abstract class AuthorisedEndpoint extends HttpServlet {
             Integer resource = Parser.parseURL(request);
             try {
                 if(request.getParameter("token")==null){
-                throw new Authorisation.UnauthorisedException();
+                throw new UserAccessControl.UnauthorisedException();
             }
             json.put("token", request.getParameter("token"));
             
@@ -40,7 +47,7 @@ public abstract class AuthorisedEndpoint extends HttpServlet {
                 } else {
                     obj = doRead(json, resource);
                 }
-            } catch (Authorisation.UnauthorisedException e) {
+            } catch (UserAccessControl.UnauthorisedException e) {
                 response.sendError(HttpServletResponse.SC_FORBIDDEN);//
                 return;
             }
@@ -60,6 +67,13 @@ public abstract class AuthorisedEndpoint extends HttpServlet {
 
     }
 
+    /**
+     *
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -68,7 +82,7 @@ public abstract class AuthorisedEndpoint extends HttpServlet {
         try {
             JSONObject json = Parser.parseRequest(request);
             if(request.getParameter("token")==null){
-                throw new Authorisation.UnauthorisedException();
+                throw new UserAccessControl.UnauthorisedException();
             }
             json.put("token", request.getParameter("token"));
 
@@ -76,7 +90,7 @@ public abstract class AuthorisedEndpoint extends HttpServlet {
 
         } catch (Parser.RequestParseException ex) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);//send a bad request
-        } catch (Authorisation.UnauthorisedException ex) {
+        } catch (UserAccessControl.UnauthorisedException ex) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN);//
             return;
         }
@@ -90,6 +104,13 @@ public abstract class AuthorisedEndpoint extends HttpServlet {
 
     }
 
+    /**
+     *
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -99,7 +120,7 @@ public abstract class AuthorisedEndpoint extends HttpServlet {
             Integer resource = Parser.parseURL(request);
             JSONObject json = Parser.parseRequest(request);
             if(request.getParameter("token")==null){
-                throw new Authorisation.UnauthorisedException();
+                throw new UserAccessControl.UnauthorisedException();
             }
             json.put("token", request.getParameter("token"));
 
@@ -112,7 +133,7 @@ public abstract class AuthorisedEndpoint extends HttpServlet {
         } catch (Parser.URLParseException | Parser.RequestParseException e) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);//send a bad request
             return;
-        } catch (Authorisation.UnauthorisedException ex) {
+        } catch (UserAccessControl.UnauthorisedException ex) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN);//
             return;
         }
@@ -126,6 +147,13 @@ public abstract class AuthorisedEndpoint extends HttpServlet {
 
     }
 
+    /**
+     *
+     * @param request
+     * @param response
+     * @throws IOException
+     * @throws ServletException
+     */
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws
             IOException, ServletException {
@@ -135,7 +163,7 @@ public abstract class AuthorisedEndpoint extends HttpServlet {
             Integer resource = Parser.parseURL(request);
             JSONObject json = Parser.parseRequest(request);
             if(request.getParameter("token")==null){
-                throw new Authorisation.UnauthorisedException();
+                throw new UserAccessControl.UnauthorisedException();
             }
             json.put("token", request.getParameter("token"));
 
@@ -147,7 +175,7 @@ public abstract class AuthorisedEndpoint extends HttpServlet {
         } catch (Parser.URLParseException | Parser.RequestParseException e) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);//send a bad request
             return;
-        } catch (Authorisation.UnauthorisedException ex) {
+        } catch (UserAccessControl.UnauthorisedException ex) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN);//
             return;
         }
@@ -169,7 +197,7 @@ public abstract class AuthorisedEndpoint extends HttpServlet {
      * @return returns a list of all entities
      * @throws com.tna.common.Authorisation.UnauthorisedException
      */
-    public abstract JSONObject doList(JSONObject obj) throws Authorisation.UnauthorisedException;
+    public abstract JSONObject doList(JSONObject obj) throws UserAccessControl.UnauthorisedException;
 
     /**
      *
@@ -178,7 +206,7 @@ public abstract class AuthorisedEndpoint extends HttpServlet {
      * code in JSON format.
      * @throws com.tna.common.Authorisation.UnauthorisedException
      */
-    public abstract JSONObject doCreate(JSONObject json) throws Authorisation.UnauthorisedException;
+    public abstract JSONObject doCreate(JSONObject json) throws UserAccessControl.UnauthorisedException;
 
     /**
      *
@@ -188,7 +216,7 @@ public abstract class AuthorisedEndpoint extends HttpServlet {
      * code in JSON format.
      * @throws com.tna.common.Authorisation.UnauthorisedException
      */
-    public abstract JSONObject doUpdate(JSONObject json, int resource) throws Authorisation.UnauthorisedException;
+    public abstract JSONObject doUpdate(JSONObject json, int resource) throws UserAccessControl.UnauthorisedException;
 
     /**
      *
@@ -198,7 +226,7 @@ public abstract class AuthorisedEndpoint extends HttpServlet {
      * entity details in JSON format.
      * @throws com.tna.common.Authorisation.UnauthorisedException
      */
-    public abstract JSONObject doRead(JSONObject json, int resource) throws Authorisation.UnauthorisedException;
+    public abstract JSONObject doRead(JSONObject json, int resource) throws UserAccessControl.UnauthorisedException;
 
     /**
      *
@@ -208,6 +236,6 @@ public abstract class AuthorisedEndpoint extends HttpServlet {
      * code in JSON format.
      * @throws com.tna.common.Authorisation.UnauthorisedException
      */
-    public abstract JSONObject doDelete(JSONObject json, int resource) throws Authorisation.UnauthorisedException;
+    public abstract JSONObject doDelete(JSONObject json, int resource) throws UserAccessControl.UnauthorisedException;
 
 }

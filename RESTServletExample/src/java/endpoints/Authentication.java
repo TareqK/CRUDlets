@@ -3,6 +3,7 @@ package endpoints;
 
 import entities.User;
 import com.tna.endpoints.AuthenticationEndpoint;
+import com.tna.common.UserAccessControl;
 import javax.servlet.annotation.WebServlet;
 import org.json.simple.JSONObject;
 
@@ -17,11 +18,11 @@ import org.json.simple.JSONObject;
  * @author tareq
  */
 @WebServlet("/auth/*")
-public class Authorisation extends AuthenticationEndpoint{
+public class Authentication extends AuthenticationEndpoint{
 
     @Override
-    public JSONObject login(JSONObject obj) throws com.tna.common.Authorisation.UnauthorisedException {
-        return new User().login(obj);
+    public JSONObject login(JSONObject obj) throws UserAccessControl.UnauthorisedException {
+        return UserAccessControl.login(User.class,obj);
     }
 
 

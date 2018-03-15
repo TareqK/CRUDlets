@@ -5,7 +5,7 @@
  */
 package com.tna.endpoints;
 
-import com.tna.common.Authorisation;
+import com.tna.common.UserAccessControl;
 import org.json.simple.JSONObject;
 
 /**
@@ -23,7 +23,7 @@ public abstract class AuthenticationEndpoint extends BasicEndpoint {
     public JSONObject doCreate(JSONObject json) {
         try {
             return login(json);
-        } catch (Authorisation.UnauthorisedException ex) {
+        } catch (UserAccessControl.UnauthorisedException ex) {
             return null;
         }
     }
@@ -49,7 +49,7 @@ public abstract class AuthenticationEndpoint extends BasicEndpoint {
      * @return Returns the token and key on login success, or throws an error on failure.
      * @throws Authorisation.UnauthorisedException
      */
-    public abstract JSONObject login(JSONObject obj) throws Authorisation.UnauthorisedException ;
+    public abstract JSONObject login(JSONObject obj) throws UserAccessControl.UnauthorisedException ;
 
 
   

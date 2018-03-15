@@ -40,7 +40,7 @@ public class Init implements ServletContextListener {
         Access.database = "api_test";
         Access.username = "api_test";
         Access.password = "pass1234";
-  
+        Access.connect();
     }
 
 

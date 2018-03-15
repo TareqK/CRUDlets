@@ -1,6 +1,7 @@
 package entities;
 
 
+import com.tna.common.UserAccessControl;
 import com.tna.entities.AuthenticationEntity;
 import org.json.simple.JSONObject;
 
@@ -16,6 +17,10 @@ import org.json.simple.JSONObject;
  */
 public class User extends AuthenticationEntity {
 
+    public static JSONObject login(JSONObject obj) throws UserAccessControl.UnauthorisedException{
+        return UserAccessControl.login(User.class, obj);
+    }
+    
     @Override
     public JSONObject list() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

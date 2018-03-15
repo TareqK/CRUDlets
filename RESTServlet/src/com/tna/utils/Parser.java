@@ -18,7 +18,7 @@ import org.json.simple.parser.ParseException;
 public class Parser {
 
     /**
-     * Parses a request to a JSONObject.
+     * Parses an HttpServletRequest's Data to a JSONObject.
      * @param request
      * @return returns the HTTP Request as a JSONObject.
      * @throws IOException
@@ -47,6 +47,13 @@ public class Parser {
         }
     }
     
+    /**
+     * Parses and extracts an HttpServletRequest's URL's resource.
+     * @param request
+     * @return returns the path/resource if the URL is correct , or null if the URL has no path
+     * , throws a URLParseException otherwise.
+     * @throws URLParseException
+     */
     public static Integer parseURL(HttpServletRequest request) throws URLParseException {//URI parser
         String pathInfo = request.getPathInfo();
         if (pathInfo == null || pathInfo.equals("/")) {
@@ -61,6 +68,9 @@ public class Parser {
         }
     }
 
+    /**
+     * Thrown when there is something wrong with the URL.
+     */
     public static class URLParseException extends Exception {
 
         public URLParseException() {

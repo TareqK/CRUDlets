@@ -1,7 +1,7 @@
 package endpoints;
 
 
-import com.tna.common.Authorisation;
+import com.tna.common.UserAccessControl;
 import com.tna.data.Persistence;
 import com.tna.endpoints.AuthorisedEndpoint;
 import entities.User;
@@ -20,30 +20,30 @@ import org.json.simple.JSONObject;
  * @author tareq
  */
 @WebServlet("/testauth/*")
-public class AuthenticatedTestEndpoint extends AuthorisedEndpoint{
+public class AuthorisedTestEndpoint extends AuthorisedEndpoint{
 
     @Override
-    public JSONObject doList(JSONObject obj) throws Authorisation.UnauthorisedException {
+    public JSONObject doList(JSONObject obj) throws UserAccessControl.UnauthorisedException {
         return Persistence.list(TestEntity.class,User.class,obj);
     }
 
     @Override
-    public JSONObject doCreate(JSONObject json) throws Authorisation.UnauthorisedException {
+    public JSONObject doCreate(JSONObject json) throws UserAccessControl.UnauthorisedException {
         return Persistence.create(TestEntity.class,User.class,json);
     }
 
     @Override
-    public JSONObject doUpdate(JSONObject json, int resource) throws Authorisation.UnauthorisedException {
+    public JSONObject doUpdate(JSONObject json, int resource) throws UserAccessControl.UnauthorisedException {
         return Persistence.update(TestEntity.class,User.class,json,resource);
     }
 
     @Override
-    public JSONObject doRead(JSONObject json, int resource) throws Authorisation.UnauthorisedException {
+    public JSONObject doRead(JSONObject json, int resource) throws UserAccessControl.UnauthorisedException {
         return Persistence.read(TestEntity.class,User.class,json,resource);
     }
 
     @Override
-    public JSONObject doDelete(JSONObject json, int resource) throws Authorisation.UnauthorisedException {
+    public JSONObject doDelete(JSONObject json, int resource) throws UserAccessControl.UnauthorisedException {
         return Persistence.delete(TestEntity.class,User.class,json,resource);
     }
 

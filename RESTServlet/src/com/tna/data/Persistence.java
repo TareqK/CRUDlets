@@ -5,7 +5,7 @@
  */
 package com.tna.data;
 
-import com.tna.common.Authorisation;
+import com.tna.common.UserAccessControl;
 import com.tna.utils.JSON;
 import java.lang.reflect.Field;
 import java.sql.PreparedStatement;
@@ -93,8 +93,8 @@ public class Persistence {
 
         JSONObject result = new JSONObject();
         try {
-            String authorName = object.getSimpleName();
-            String className = author.getSimpleName();
+            String authorName = author.getSimpleName();
+            String className = object.getSimpleName();
             PreparedStatement pstmt = Access.connection.prepareStatement((String.format(READ_USER_OBJECT_SQL, className, authorName)), Statement.RETURN_GENERATED_KEYS);
             pstmt.setObject(1, resource);
             pstmt.setObject(2, json.get("token"));
