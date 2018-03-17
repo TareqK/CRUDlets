@@ -7,7 +7,7 @@
 <!-- the Compile on Save feature is turned off for the project. -->
 <!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
 <!-- in the project's Project Properties dialog box.-->
-<project name="RESTServlet" default="default" basedir=".">
+<project name="CRUDlets" default="default" basedir=".">
     <description>Builds, tests, and runs the project RESTServlet.</description>
     <import file="nbproject/build-impl.xml"/>
     <!--
@@ -72,7 +72,7 @@
     --><target name="-post-jar">
 
     <!-- Change the value to the name of the final jar without .jar -->
-    <property name="store.jar.name" value="RESTServlet"/>
+    <property name="store.jar.name" value="CRUDlets"/>
 
     <!-- don't edit below this line -->
     <property name="store.dir" value="dist"/>
