@@ -1,6 +1,6 @@
 # Java REST Servlet
 
-A simple Java Library for creating CRUD REST web services using java servlets.
+A simple Java Framework for creating CRUD REST web services using java servlets.
 
 By Tareq Kirresh
 
