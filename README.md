@@ -1,13 +1,13 @@
-# Java REST Servlet
+# CURDlets
 
 A simple Java Framework for creating CRUD REST web services using java servlets.
 
 By Tareq Kirresh
 
-[JAR file](./RESTlets/dist)
+[JAR file](./CURDlets/dist)
 
-[Source Code](./RESTlets/src/com/tna/)
+[Source Code](./CURDlets/src/com/tna/)
 
-[Example Usage](./RESTletExample/src/)
+[Example Usage](./CURDletExample/src/)
 
  
