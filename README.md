@@ -4,10 +4,10 @@ A simple Java Framework for creating CRUD REST web services using java servlets.
 
 By Tareq Kirresh
 
-[JAR file](./RESTServlet/dist)
+[JAR file](./RESTlets/dist)
 
-[Source Code](./RESTServlet/src/com/tna/)
+[Source Code](./RESTlets/src/com/tna/)
 
-[Example Usage](./RESTServletExample/src/)
+[Example Usage](./RESTletExample/src/)
 
  
