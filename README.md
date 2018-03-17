@@ -4,10 +4,10 @@ A simple Java Framework for creating CRUD REST web services using java servlets.
 
 By Tareq Kirresh
 
-[JAR file](./CURDlets/dist)
+[JAR file](./CRUDlets/dist)
 
-[Source Code](./CURDlets/src/com/tna/)
+[Source Code](./CRUDlets/src/com/tna/)
 
-[Example Usage](./CURDletExample/src/)
+[Example Usage](./CRUDletExample/src/)
 
  
