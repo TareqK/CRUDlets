@@ -7,6 +7,7 @@ package com.tna.common;
 
 import com.tna.data.Access;
 import com.tna.data.Persistence;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,8 +19,7 @@ import org.json.simple.JSONObject;
  * @author tareq
  */
 public class UserAccessControl {
-    
-    
+
     /**
      * Thrown when an unauthorised operation is attempted.
      */
@@ -29,107 +29,125 @@ public class UserAccessControl {
             System.out.println("Anuthroised Request");
         }
     }
-    
-     /**
-     * Performs a login operation with a user's username and password, and assigns them a new token on success.
+
+    /**
+     * Performs a login operation with a user's username and password, and
+     * assigns them a new token on success.
+     *
      * @param author
      * @param obj
      * @return a JSONObject with the token and user id
      * @throws UserAccessControl.UnauthorisedException
      */
-    public static JSONObject login(Class author, JSONObject obj) throws UserAccessControl.UnauthorisedException{
+    public static JSONObject login(Class author, JSONObject obj) throws UserAccessControl.UnauthorisedException {
+                  Connection conn = Access.pool.checkOut();
+
         try {
             PreparedStatement pstmt;
-            pstmt = Access.connection.prepareStatement(String.format(Persistence.GET_PASSWORD_SQL,author.getSimpleName()));
+            pstmt = conn.prepareStatement(String.format(Persistence.GET_PASSWORD_SQL, author.getSimpleName()));
             pstmt.setObject(1, obj.get("userName"));
             ResultSet rs = pstmt.executeQuery();
             rs.next();
-            if(!rs.getString("password").equals(obj.get("password").toString())){
+            if (!rs.getString("password").equals(obj.get("password").toString())) {
                 throw new UserAccessControl.UnauthorisedException();
             }
             JSONObject json = new JSONObject();
-            PreparedStatement pstmt2 = Access.connection.prepareStatement(String.format(Persistence.SET_TOKEN_SQL,author.getSimpleName()));
+            PreparedStatement pstmt2 = conn.prepareStatement(String.format(Persistence.SET_TOKEN_SQL, author.getSimpleName()));
             String token = UUID.randomUUID().toString();
             long id = rs.getInt("id");
             pstmt2.setString(1, token);
             pstmt2.setLong(2, id);
-            
+
             pstmt2.execute();
-            json.put("token",token);
-            json.put("id",id);
+            json.put("token", token);
+            json.put("id", id);
+            Access.pool.checkIn(conn);
             return json;
-            
+
         } catch (SQLException ex) {
-            System.out.println(ex);
+            Access.pool.checkIn(conn);
             throw new UserAccessControl.UnauthorisedException();
+        }
     }
-    }
-        
+
     /**
-     * Authorises an operation of a certain privilege level.If the privilege level of 
-     * the operation is higher than that of the user, it throws an exception. Otherwise,
-     * it returns nothing. If the user level is 999, then all operations are permitted.
+     * Authorises an operation of a certain privilege level.If the privilege
+     * level of the operation is higher than that of the user, it throws an
+     * exception. Otherwise, it returns nothing. If the user level is 999, then
+     * all operations are permitted.
+     *
      * @param author
      * @param obj
      * @param level
      * @throws UserAccessControl.UnauthorisedException
      */
     public static void authOperation(Class author, JSONObject obj, int level) throws UserAccessControl.UnauthorisedException {
-        if(level<=0){
-            return;      
+        Connection conn = Access.pool.checkOut();
+        if (level <= 0) {
+            return;
         }
         try {
             PreparedStatement pstmt;
-            pstmt = Access.connection.prepareStatement(String.format(Persistence.GET_PRIVILEGE_AND_ID_SQL,author.getSimpleName()));
+            pstmt = conn.prepareStatement(String.format(Persistence.GET_PRIVILEGE_AND_ID_SQL, author.getSimpleName()));
             pstmt.setObject(1, obj.get("token"));
             ResultSet rs = pstmt.executeQuery();
             rs.next();
             JSONObject json = new JSONObject();
-            if(rs.getInt("level")==999){
+            Access.pool.checkIn(conn);
+
+            if (rs.getInt("level") == 999) {
                 return;
-            }else if(level>rs.getInt("level")){
+            } else if (level > rs.getInt("level")) {
                 throw new UserAccessControl.UnauthorisedException();
             }
-            
+
         } catch (SQLException ex) {
+            Access.pool.checkIn(conn);
             throw new UserAccessControl.UnauthorisedException();
+        }
+
     }
-        
-    }
-    
+
     /**
-     * Authorises a user to do an operation on a certain entity. If the privilege
-     * level of the user is 999, then he can do whatever he want to any entity. If 
-     * the user attempts to access an entity that is not his, then an error is thrown.
+     * Authorises a user to do an operation on a certain entity. If the
+     * privilege level of the user is 999, then he can do whatever he want to
+     * any entity. If the user attempts to access an entity that is not his,
+     * then an error is thrown.
+     *
      * @param obj
      * @param resource
      * @param object
      * @param author
      * @throws UserAccessControl.UnauthorisedException
      */
-    public static void authAccess(Class author, JSONObject obj , int resource, Class object) throws UserAccessControl.UnauthorisedException {
+    public static void authAccess(Class author, JSONObject obj, int resource, Class object) throws UserAccessControl.UnauthorisedException {
+        Connection conn = Access.pool.checkOut();
         try {
             PreparedStatement pstmt;
-            pstmt = Access.connection.prepareStatement(String.format(Persistence.GET_PRIVILEGE_AND_ID_SQL,author.getSimpleName()));
+            pstmt = conn.prepareStatement(String.format(Persistence.GET_PRIVILEGE_AND_ID_SQL, author.getSimpleName()));
             pstmt.setObject(1, obj.get("token"));
             ResultSet rs = pstmt.executeQuery();
             rs.next();
-            if(rs.getInt("level")==999){
+            if (rs.getInt("level") == 999) {
+                Access.pool.checkIn(conn);
+
                 return;
             }
             PreparedStatement pstmt2;
-            pstmt2 = Access.connection.prepareStatement(String.format(Persistence.READ_OBJECT_USER_SQL,object.getSimpleName()));
+            pstmt2 = conn.prepareStatement(String.format(Persistence.READ_OBJECT_USER_SQL, object.getSimpleName()));
             pstmt2.setObject(1, resource);
             ResultSet rs2 = pstmt2.executeQuery();
-            rs2.next();
-            if(rs.getLong("id")!=rs2.getLong("user")){
-                 throw new UserAccessControl.UnauthorisedException();
-            }
-            
-        } catch (SQLException ex) {
-            throw new UserAccessControl.UnauthorisedException();
-    }
+            Access.pool.checkIn(conn);
 
+            rs2.next();
+            if (rs.getLong("id") != rs2.getLong("user")) {
+                throw new UserAccessControl.UnauthorisedException();
+            }
+
+        } catch (SQLException ex) {
+            Access.pool.checkIn(conn);
+            throw new UserAccessControl.UnauthorisedException();
+        }
 
     }
 }

@@ -8,6 +8,7 @@ package com.tna.data;
 import com.tna.common.UserAccessControl;
 import com.tna.utils.JSON;
 import java.lang.reflect.Field;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -56,22 +57,25 @@ public class Persistence {
      */
     public static JSONObject create(Class object, Class author, JSONObject json) {
         JSONObject result = JSON.successResponse();
+        Connection conn = Access.pool.checkOut();
         try {
             String authorName = author.getSimpleName();
             String className = object.getSimpleName();
 
-            PreparedStatement pstmt2 = Access.connection.prepareStatement(String.format(GET_PRIVILEGE_AND_ID_SQL, authorName));
+            PreparedStatement pstmt2 = conn.prepareStatement(String.format(GET_PRIVILEGE_AND_ID_SQL, authorName));
             ResultSet rs = pstmt2.executeQuery();
             rs.next();
             long user = rs.getLong("id");
             JSONObject key = Persistence.create(object, json);
-            PreparedStatement pstmt = Access.connection.prepareStatement(String.format(CREATE_USER_OBJECT_SQL, className));
+            PreparedStatement pstmt = conn.prepareStatement(String.format(CREATE_USER_OBJECT_SQL, className));
             pstmt.setObject(1, user);
             pstmt.setObject(2, Integer.parseInt(key.get("key").toString()));
             ResultSet rs2 = pstmt.executeQuery();
         } catch (SQLException e) {
             System.out.println(e);
-            return null;
+            result = null;
+        }finally{
+            Access.pool.checkIn(conn);
         }
         return result;
     }
@@ -89,10 +93,12 @@ public class Persistence {
      */
     public static JSONObject read(Class object, Class author, JSONObject json, long resource) {
         JSONObject result = new JSONObject();
+                    Connection conn = Access.pool.checkOut();
+
         try {
             String authorName = author.getSimpleName();
             String className = object.getSimpleName();
-            PreparedStatement pstmt = Access.connection.prepareStatement((String.format(READ_USER_OBJECT_SQL, className, authorName)), Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement pstmt = conn.prepareStatement((String.format(READ_USER_OBJECT_SQL, className, authorName)), Statement.RETURN_GENERATED_KEYS);
             pstmt.setObject(1, resource);
             pstmt.setObject(2, json.get("token"));
             ResultSet rs = pstmt.executeQuery();
@@ -106,7 +112,9 @@ public class Persistence {
             }
         } catch (SQLException e) {
             System.out.println(e);
-            return null;
+            result = null;
+        } finally{
+            Access.pool.checkIn(conn);
         }
         return result;
     }
@@ -124,6 +132,8 @@ public class Persistence {
      */
     public static JSONObject update(Class object, Class author, JSONObject json, long resource) {
         JSONObject result = new JSONObject();
+                   Connection conn = Access.pool.checkOut();
+
         try {
             String authorName = object.getSimpleName();
             String className = author.getSimpleName();
@@ -139,7 +149,7 @@ public class Persistence {
                 }
             }
             values.deleteCharAt((values.length() - 1));
-            PreparedStatement pstmt = Access.connection.prepareStatement((String.format(UPDATE_USER_OBJECT_SQL, className, values.toString(), authorName)), Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement pstmt = conn.prepareStatement((String.format(UPDATE_USER_OBJECT_SQL, className, values.toString(), authorName)), Statement.RETURN_GENERATED_KEYS);
             int i = 1;
             for (Object key : keySet) {
                 try {
@@ -160,7 +170,9 @@ public class Persistence {
             }
         } catch (SQLException e) {
             System.out.println(e);
-            return null;
+            result = null;
+        }finally{
+            Access.pool.checkIn(conn);
         }
         return result;
     }
@@ -177,17 +189,21 @@ public class Persistence {
      * to the user, returns null otherwise.
      */
     public static JSONObject delete(Class object, Class author, JSONObject json, long resource) {
+                    Connection conn = Access.pool.checkOut();
+
         JSONObject result = JSON.successResponse();
         try {
             String authorName = object.getSimpleName();
             String className = author.getSimpleName();
-            PreparedStatement pstmt = Access.connection.prepareStatement((String.format(DELETE_USER_OBJECT_SQL, className, authorName)), Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement pstmt = conn.prepareStatement((String.format(DELETE_USER_OBJECT_SQL, className, authorName)), Statement.RETURN_GENERATED_KEYS);
             pstmt.setObject(1, resource);
             pstmt.setObject(2, json.get("token"));
             ResultSet rs = pstmt.executeQuery();
         } catch (SQLException e) {
             System.out.println(e);
-            return null;
+            result =  null;
+        }finally{
+            Access.pool.checkIn(conn);
         }
         return result;
     }
@@ -202,10 +218,12 @@ public class Persistence {
      */
     public static JSONObject list(Class object, Class author, JSONObject json) {
         JSONObject result = new JSONObject();
+                  Connection conn = Access.pool.checkOut();
+
         try {
             String className = object.getSimpleName();
             String authorName = author.getSimpleName();
-            PreparedStatement pstmt = Access.connection.prepareStatement((String.format(LIST_USER_OBJECTS_SQL, className, authorName)), Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement pstmt = conn.prepareStatement((String.format(LIST_USER_OBJECTS_SQL, className, authorName)), Statement.RETURN_GENERATED_KEYS);
             pstmt.setObject(1, json.get("token"));
             ResultSet rs = pstmt.executeQuery();
             Field[] fields = getAllFields(object);
@@ -221,7 +239,9 @@ public class Persistence {
             }
         } catch (SQLException e) {
             System.out.println(e);
-            return null;
+            result =  null;
+        } finally{
+            Access.pool.checkIn(conn);
         }
         return result;
     }
@@ -237,6 +257,8 @@ public class Persistence {
      */
     public static JSONObject readByProperties(Class object, JSONObject json) {
         JSONObject result = new JSONObject();
+                    Connection conn = Access.pool.checkOut();
+
         try {
             StringBuilder valuesString = new StringBuilder();
             Set keys = json.keySet();
@@ -256,7 +278,7 @@ public class Persistence {
                 }
             }
             String className = object.getSimpleName();
-            PreparedStatement pstmt = Access.connection.prepareStatement((String.format(SEARCH_BY_PROPERTY_SQL, className, valuesString.toString())), Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement pstmt = conn.prepareStatement((String.format(SEARCH_BY_PROPERTY_SQL, className, valuesString.toString())), Statement.RETURN_GENERATED_KEYS);
             i = 1;
             for (Object key : keys) {
                 pstmt.setObject(i, json.get(key));
@@ -274,7 +296,9 @@ public class Persistence {
             }
         } catch (SQLException e) {
             System.out.println(e);
-            return null;
+            result =  null;
+        } finally{
+            Access.pool.checkIn(conn);
         }
         return result;
     }
@@ -289,6 +313,8 @@ public class Persistence {
      */
     public static JSONObject listByProperties(Class object, JSONObject json) {
         JSONObject result = new JSONObject();
+                    Connection conn = Access.pool.checkOut();
+
         try {
             StringBuilder valuesString = new StringBuilder();
             Set keys = json.keySet();
@@ -308,7 +334,7 @@ public class Persistence {
                 }
             }
             String className = object.getSimpleName();
-            PreparedStatement pstmt = Access.connection.prepareStatement((String.format(SEARCH_BY_PROPERTY_SQL, className, valuesString.toString())), Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement pstmt = conn.prepareStatement((String.format(SEARCH_BY_PROPERTY_SQL, className, valuesString.toString())), Statement.RETURN_GENERATED_KEYS);
             i = 1;
             for (Object key : keys) {
                 pstmt.setObject(i, json.get(key));
@@ -329,7 +355,9 @@ public class Persistence {
             }
         } catch (SQLException e) {
             System.out.println(e);
-            return null;
+            result =  null;
+        } finally{
+            Access.pool.checkIn(conn);
         }
         return result;
 
@@ -344,6 +372,8 @@ public class Persistence {
      * otherwise.
      */
     public static JSONObject create(Class object, JSONObject json) {
+                    Connection conn = Access.pool.checkOut();
+
         JSONObject result = JSON.successResponse();
         try {
             String className = object.getSimpleName();
@@ -357,7 +387,7 @@ public class Persistence {
             }
             columns.deleteCharAt((columns.length() - 1));
             values.deleteCharAt((values.length() - 1));
-            PreparedStatement pstmt = Access.connection.prepareStatement((String.format(CREATE_OBJECT_SQL, className, columns.toString(), values.toString())), Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement pstmt = conn.prepareStatement((String.format(CREATE_OBJECT_SQL, className, columns.toString(), values.toString())), Statement.RETURN_GENERATED_KEYS);
             int i = 1;
             for (Field field : fields) {
                 try {
@@ -372,7 +402,9 @@ public class Persistence {
             result.put("key", rs.getLong(1));
         } catch (SQLException e) {
             System.out.println(e);
-            return null;
+            result =  JSON.failResponse();
+        } finally{
+            Access.pool.checkIn(conn);
         }
         return result;
     }
@@ -387,10 +419,12 @@ public class Persistence {
      */
     public static JSONObject read(Class object, long id) {
         JSONObject result = new JSONObject();
+                    Connection conn = Access.pool.checkOut();
+
         try {
             String className = object.getSimpleName();
             PreparedStatement pstmt;
-            pstmt = Access.connection.prepareStatement((String.format(READ_OBJECT_SQL, className)), Statement.RETURN_GENERATED_KEYS);
+            pstmt = conn.prepareStatement((String.format(READ_OBJECT_SQL, className)), Statement.RETURN_GENERATED_KEYS);
             Field[] fields = getAllFields(object);
             pstmt.setLong(1, id);
             ResultSet rs = pstmt.executeQuery();
@@ -403,7 +437,9 @@ public class Persistence {
             }
         } catch (SQLException e) {
             System.out.println(e);
-            return null;
+            result = null;
+        } finally{
+            Access.pool.checkIn(conn);
         }
         return result;
     }
@@ -418,6 +454,8 @@ public class Persistence {
      * updated, returns null otherwise.
      */
     public static JSONObject update(Class object, long id, JSONObject json) {
+                    Connection conn = Access.pool.checkOut();
+        JSONObject response = JSON.successResponse();
         try {
             String className = object.getSimpleName();
             Field[] fields = getAllFields(object);
@@ -432,7 +470,7 @@ public class Persistence {
                 }
             }
             values.deleteCharAt((values.length() - 1));
-            PreparedStatement pstmt = Access.connection.prepareStatement((String.format(UPDATE_OBJECT_SQL, className, values.toString())), Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement pstmt = conn.prepareStatement((String.format(UPDATE_OBJECT_SQL, className, values.toString())), Statement.RETURN_GENERATED_KEYS);
             int i = 1;
             for (Object key : keySet) {
                 try {
@@ -445,9 +483,11 @@ public class Persistence {
             pstmt.execute();
         } catch (SQLException e) {
             System.out.println(e);
-            return null;
+            response = JSON.failResponse();
+        } finally{
+            Access.pool.checkIn(conn);
         }
-        return JSON.successResponse();
+        return response;
     }
 
     /**
@@ -460,16 +500,20 @@ public class Persistence {
      */
     public static JSONObject delete(Class object, long id) {
         JSONObject result = JSON.successResponse();
+                    Connection conn = Access.pool.checkOut();
+
         try {
             String className = object.getSimpleName();
-            PreparedStatement pstmt = Access.connection.prepareStatement((String.format(DELETE_OBJECT_SQL, className)), Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement pstmt = conn.prepareStatement((String.format(DELETE_OBJECT_SQL, className)), Statement.RETURN_GENERATED_KEYS);
             pstmt.setLong(1, id);
             pstmt.execute();
             ResultSet rs = pstmt.getGeneratedKeys();
             rs.next();
         } catch (SQLException e) {
             System.out.println(e);
-            return null;
+            result =  JSON.failResponse();
+        } finally{
+            Access.pool.checkIn(conn);
         }
         return result;
     }
@@ -483,9 +527,11 @@ public class Persistence {
      */
     public static JSONObject list(Class object) {
         JSONObject result = new JSONObject();
+                    Connection conn = Access.pool.checkOut();
+
         try {
             String className = object.getSimpleName();
-            PreparedStatement pstmt = Access.connection.prepareStatement((String.format(LIST_OBJECT_SQL, className)), Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement pstmt = conn.prepareStatement((String.format(LIST_OBJECT_SQL, className)), Statement.RETURN_GENERATED_KEYS);
             ResultSet rs = pstmt.executeQuery();
             Field[] fields = getAllFields(object);
             while (rs.next()) {
@@ -500,7 +546,9 @@ public class Persistence {
             }
         } catch (SQLException e) {
             System.out.println(e);
-            return null;
+            result =  null;
+        }finally{
+            Access.pool.checkIn(conn);
         }
         return result;
     }
