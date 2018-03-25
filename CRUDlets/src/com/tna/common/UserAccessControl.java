@@ -40,8 +40,8 @@ public class UserAccessControl {
      * @throws UserAccessControl.UnauthorisedException
      */
     public static JSONObject login(Class author, JSONObject obj) throws UserAccessControl.UnauthorisedException {
-                  Connection conn = Access.pool.checkOut();
-
+        Connection conn = Access.pool.checkOut();
+        JSONObject result = new JSONObject();
         try {
             PreparedStatement pstmt;
             pstmt = conn.prepareStatement(String.format(Persistence.GET_PASSWORD_SQL, author.getSimpleName()));
@@ -51,24 +51,22 @@ public class UserAccessControl {
             if (!rs.getString("password").equals(obj.get("password").toString())) {
                 throw new UserAccessControl.UnauthorisedException();
             }
-            JSONObject json = new JSONObject();
             PreparedStatement pstmt2 = conn.prepareStatement(String.format(Persistence.SET_TOKEN_SQL, author.getSimpleName()));
             String token = UUID.randomUUID().toString();
             long id = rs.getInt("id");
             pstmt2.setString(1, token);
             pstmt2.setLong(2, id);
-
             pstmt2.execute();
-            json.put("token", token);
-            json.put("id", id);
-            Access.pool.checkIn(conn);
-            return json;
-
+            result.put("token", token);
+            result.put("id", id);
         } catch (SQLException ex) {
-            Access.pool.checkIn(conn);
             throw new UserAccessControl.UnauthorisedException();
-        }
+        }finally{
+            Access.pool.checkIn(conn);
     }
+        return result;
+    }
+    
 
     /**
      * Authorises an operation of a certain privilege level.If the privilege
@@ -92,18 +90,15 @@ public class UserAccessControl {
             pstmt.setObject(1, obj.get("token"));
             ResultSet rs = pstmt.executeQuery();
             rs.next();
-            JSONObject json = new JSONObject();
-            Access.pool.checkIn(conn);
-
             if (rs.getInt("level") == 999) {
-                return;
+                System.out.println("An admin with id : "+rs.getInt("id")+" performed a level-based operation");
             } else if (level > rs.getInt("level")) {
                 throw new UserAccessControl.UnauthorisedException();
             }
-
         } catch (SQLException ex) {
-            Access.pool.checkIn(conn);
             throw new UserAccessControl.UnauthorisedException();
+        } finally{
+            Access.pool.checkIn(conn);
         }
 
     }
@@ -129,25 +124,22 @@ public class UserAccessControl {
             ResultSet rs = pstmt.executeQuery();
             rs.next();
             if (rs.getInt("level") == 999) {
-                Access.pool.checkIn(conn);
+               System.out.println("An admin with id : "+rs.getInt("id")+" performed an id-based operation");
 
-                return;
             }
             PreparedStatement pstmt2;
             pstmt2 = conn.prepareStatement(String.format(Persistence.READ_OBJECT_USER_SQL, object.getSimpleName()));
             pstmt2.setObject(1, resource);
             ResultSet rs2 = pstmt2.executeQuery();
-            Access.pool.checkIn(conn);
-
             rs2.next();
             if (rs.getLong("id") != rs2.getLong("user")) {
                 throw new UserAccessControl.UnauthorisedException();
             }
 
         } catch (SQLException ex) {
-            Access.pool.checkIn(conn);
             throw new UserAccessControl.UnauthorisedException();
+        }finally{
+            Access.pool.checkIn(conn);
         }
-
     }
 }
