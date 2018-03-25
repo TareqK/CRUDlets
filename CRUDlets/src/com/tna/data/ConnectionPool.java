@@ -21,7 +21,7 @@ public class ConnectionPool extends ObjectPool<Connection> {
         Connection conn;
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            String uri = "jdbc:mysql://" + Access.host + "/" + Access.database + "?" + "user=" + Access.username + "&password=" + Access.password + "&autoReconnect=true";
+            String uri = "jdbc:mysql://" + Access.host + "/" + Access.database + "?" + "user=" + Access.username + "&password=" + Access.password + "&autoReconnect=true&connectionTimeout=2000";
             conn = DriverManager.getConnection(uri);
 
         } catch (SQLException | ClassNotFoundException e) {

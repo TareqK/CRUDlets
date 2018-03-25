@@ -5,7 +5,6 @@
  */
 package com.tna.data;
 
-import com.tna.common.UserAccessControl;
 import com.tna.utils.JSON;
 import java.lang.reflect.Field;
 import java.sql.Connection;
