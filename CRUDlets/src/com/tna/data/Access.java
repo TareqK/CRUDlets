@@ -5,10 +5,6 @@
  */
 package com.tna.data;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-
 /**
  *
  * @author tareq
@@ -24,7 +20,7 @@ public class Access {
 
     /**
      * A method to create the singleton data access class. If there is no instance, then create
-     * a new instance of the class and connect to the database.
+     * a new instance of the class.
      * @return
      */
     public static Access getInstance() {

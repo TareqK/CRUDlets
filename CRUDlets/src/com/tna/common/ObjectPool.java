@@ -21,14 +21,31 @@ import java.util.Set;
 public abstract class ObjectPool<T> {
 
     private Set<T> available = new HashSet<>();
+    
     private Set<T> inUse = new HashSet<>();
 
+    /**
+     *
+     * @return returns a new instance of the object we want to pool.
+     */
     protected abstract T create();
+
+    /**
+     * destroys an instance of the object we are pooling.
+     * @param instance
+     */
     protected abstract void destroy(T instance);
+
+    /**
+     * validate an instance of the object we are pooling.
+     * @param instance
+     * @return returns true if the instance is valid for use, returns false otherwise.
+     */
     protected abstract boolean isValid(T instance);
 
     /**
-     * Checkout object from pool
+     *
+     * @return gets an instance of the object from the pool.
      */
     public synchronized T checkOut() {
         if (available.isEmpty()) {
@@ -46,6 +63,10 @@ public abstract class ObjectPool<T> {
 
     }
 
+    /**
+     * returns an instance of the object to the pool.
+     * @param instance
+     */
     public synchronized void checkIn(T instance) {
         inUse.remove(instance);
         if (isValid(instance)) {
@@ -56,6 +77,10 @@ public abstract class ObjectPool<T> {
 
     }
 
+    /**
+     * Initializes a number of objects for the pool.
+     * @param numberOfInstances
+     */
     public void initialize(int numberOfInstances) {
         ArrayList<T> instances = new ArrayList();
         for (int i = 0; i < numberOfInstances; i++) {
