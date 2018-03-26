@@ -8,6 +8,6 @@ By Tareq Kirresh
 
 [Source Code](./CRUDlets/src/com/tna/)
 
-[Example Usage](./CRUDletExample/src/)
+[Example Usage](./CRUDletsExample/src/)
 
  
