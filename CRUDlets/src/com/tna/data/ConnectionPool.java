@@ -42,6 +42,16 @@ public class ConnectionPool extends ObjectPool<Connection> {
            return false;
         }
     }
+
+    @Override
+    protected void destroy(Connection instance) {
+        try {
+            instance.close();
+        } catch (SQLException ex) {
+            System.out.println(ex);
+        }
+       instance = null;
+    }
     
     
 }

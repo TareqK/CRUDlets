@@ -24,7 +24,7 @@ public abstract class ObjectPool<T> {
     private Set<T> inUse = new HashSet<>();
 
     protected abstract T create();
-
+    protected abstract void destroy(T instance);
     protected abstract boolean isValid(T instance);
 
     /**
@@ -40,6 +40,7 @@ public abstract class ObjectPool<T> {
             inUse.add(instance);
             return instance;
         } else {
+            destroy(instance);
             return checkOut();
         }
 
@@ -50,7 +51,7 @@ public abstract class ObjectPool<T> {
         if (isValid(instance)) {
             available.add(instance);
         } else {
-            instance = null;
+            destroy(instance);
         }
 
     }
