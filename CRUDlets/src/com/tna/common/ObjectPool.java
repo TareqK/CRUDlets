@@ -9,6 +9,7 @@ package com.tna.common;
  *
  * @author tareq
  */
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -24,6 +25,8 @@ public abstract class ObjectPool<T> {
 
     protected abstract T create();
 
+    protected abstract boolean isValid(T instance);
+
     /**
      * Checkout object from pool
      */
@@ -33,15 +36,33 @@ public abstract class ObjectPool<T> {
         }
         T instance = available.iterator().next();
         available.remove(instance);
-        inUse.add(instance);
-        return instance;
+        if (isValid(instance)) {
+            inUse.add(instance);
+            return instance;
+        } else {
+            return checkOut();
+        }
 
     }
 
     public synchronized void checkIn(T instance) {
         inUse.remove(instance);
-        available.add(instance);
+        if (isValid(instance)) {
+            available.add(instance);
+        } else {
+            instance = null;
+        }
 
+    }
+
+    public void initialize(int numberOfInstances) {
+        ArrayList<T> instances = new ArrayList();
+        for (int i = 0; i < numberOfInstances; i++) {
+            instances.add(this.checkOut());
+        }
+        for (T instance : instances) {
+            checkIn(instance);
+        }
     }
 
     @Override
