@@ -70,10 +70,14 @@ public class Persistence {
             pstmt.setObject(1, user);
             pstmt.setObject(2, Integer.parseInt(key.get("key").toString()));
             ResultSet rs2 = pstmt.executeQuery();
+            rs.close();
+            rs2.close();
+            pstmt.close();
         } catch (SQLException e) {
             System.out.println(e);
             result = null;
-        }finally{
+        } finally {
+
             Access.pool.checkIn(conn);
         }
         return result;
@@ -92,7 +96,7 @@ public class Persistence {
      */
     public static JSONObject read(Class object, Class author, JSONObject json, long resource) {
         JSONObject result = new JSONObject();
-                    Connection conn = Access.pool.checkOut();
+        Connection conn = Access.pool.checkOut();
 
         try {
             String authorName = author.getSimpleName();
@@ -109,10 +113,12 @@ public class Persistence {
                 } catch (IllegalArgumentException ex) {
                 }
             }
+            rs.close();
+            pstmt.close();
         } catch (SQLException e) {
             System.out.println(e);
             result = null;
-        } finally{
+        } finally {
             Access.pool.checkIn(conn);
         }
         return result;
@@ -131,7 +137,7 @@ public class Persistence {
      */
     public static JSONObject update(Class object, Class author, JSONObject json, long resource) {
         JSONObject result = new JSONObject();
-                   Connection conn = Access.pool.checkOut();
+        Connection conn = Access.pool.checkOut();
 
         try {
             String authorName = object.getSimpleName();
@@ -167,10 +173,12 @@ public class Persistence {
                 } catch (IllegalArgumentException ex) {
                 }
             }
+            rs.close();
+            pstmt.close();
         } catch (SQLException e) {
             System.out.println(e);
             result = null;
-        }finally{
+        } finally {
             Access.pool.checkIn(conn);
         }
         return result;
@@ -188,7 +196,7 @@ public class Persistence {
      * to the user, returns null otherwise.
      */
     public static JSONObject delete(Class object, Class author, JSONObject json, long resource) {
-                    Connection conn = Access.pool.checkOut();
+        Connection conn = Access.pool.checkOut();
 
         JSONObject result = JSON.successResponse();
         try {
@@ -198,10 +206,12 @@ public class Persistence {
             pstmt.setObject(1, resource);
             pstmt.setObject(2, json.get("token"));
             ResultSet rs = pstmt.executeQuery();
+            rs.close();
+            pstmt.close();
         } catch (SQLException e) {
             System.out.println(e);
-            result =  null;
-        }finally{
+            result = null;
+        } finally {
             Access.pool.checkIn(conn);
         }
         return result;
@@ -217,7 +227,7 @@ public class Persistence {
      */
     public static JSONObject list(Class object, Class author, JSONObject json) {
         JSONObject result = new JSONObject();
-                  Connection conn = Access.pool.checkOut();
+        Connection conn = Access.pool.checkOut();
 
         try {
             String className = object.getSimpleName();
@@ -236,10 +246,12 @@ public class Persistence {
                 }
                 result.put(rs.getObject("id"), temp);
             }
+            rs.close();
+            pstmt.close();
         } catch (SQLException e) {
             System.out.println(e);
-            result =  null;
-        } finally{
+            result = null;
+        } finally {
             Access.pool.checkIn(conn);
         }
         return result;
@@ -256,7 +268,7 @@ public class Persistence {
      */
     public static JSONObject readByProperties(Class object, JSONObject json) {
         JSONObject result = new JSONObject();
-                    Connection conn = Access.pool.checkOut();
+        Connection conn = Access.pool.checkOut();
 
         try {
             StringBuilder valuesString = new StringBuilder();
@@ -293,10 +305,12 @@ public class Persistence {
 
                 }
             }
+            rs.close();
+            pstmt.close();
         } catch (SQLException e) {
             System.out.println(e);
-            result =  null;
-        } finally{
+            result = null;
+        } finally {
             Access.pool.checkIn(conn);
         }
         return result;
@@ -312,7 +326,7 @@ public class Persistence {
      */
     public static JSONObject listByProperties(Class object, JSONObject json) {
         JSONObject result = new JSONObject();
-                    Connection conn = Access.pool.checkOut();
+        Connection conn = Access.pool.checkOut();
 
         try {
             StringBuilder valuesString = new StringBuilder();
@@ -352,10 +366,12 @@ public class Persistence {
                 }
                 result.put(rs.getObject("id"), obj);
             }
+            rs.close();
+            pstmt.close();
         } catch (SQLException e) {
             System.out.println(e);
-            result =  null;
-        } finally{
+            result = null;
+        } finally {
             Access.pool.checkIn(conn);
         }
         return result;
@@ -371,7 +387,7 @@ public class Persistence {
      * otherwise.
      */
     public static JSONObject create(Class object, JSONObject json) {
-                    Connection conn = Access.pool.checkOut();
+        Connection conn = Access.pool.checkOut();
 
         JSONObject result = JSON.successResponse();
         try {
@@ -399,10 +415,12 @@ public class Persistence {
             ResultSet rs = pstmt.getGeneratedKeys();
             rs.next();
             result.put("key", rs.getLong(1));
+            rs.close();
+            pstmt.close();
         } catch (SQLException e) {
             System.out.println(e);
-            result =  JSON.failResponse();
-        } finally{
+            result = JSON.failResponse();
+        } finally {
             Access.pool.checkIn(conn);
         }
         return result;
@@ -418,7 +436,7 @@ public class Persistence {
      */
     public static JSONObject read(Class object, long id) {
         JSONObject result = new JSONObject();
-                    Connection conn = Access.pool.checkOut();
+        Connection conn = Access.pool.checkOut();
 
         try {
             String className = object.getSimpleName();
@@ -434,10 +452,12 @@ public class Persistence {
                 } catch (IllegalArgumentException ex) {
                 }
             }
+            rs.close();
+            pstmt.close();
         } catch (SQLException e) {
             System.out.println(e);
             result = null;
-        } finally{
+        } finally {
             Access.pool.checkIn(conn);
         }
         return result;
@@ -453,7 +473,7 @@ public class Persistence {
      * updated, returns null otherwise.
      */
     public static JSONObject update(Class object, long id, JSONObject json) {
-                    Connection conn = Access.pool.checkOut();
+        Connection conn = Access.pool.checkOut();
         JSONObject response = JSON.successResponse();
         try {
             String className = object.getSimpleName();
@@ -480,10 +500,11 @@ public class Persistence {
             }
             pstmt.setObject(i, id);
             pstmt.execute();
+            pstmt.close();
         } catch (SQLException e) {
             System.out.println(e);
             response = JSON.failResponse();
-        } finally{
+        } finally {
             Access.pool.checkIn(conn);
         }
         return response;
@@ -499,19 +520,18 @@ public class Persistence {
      */
     public static JSONObject delete(Class object, long id) {
         JSONObject result = JSON.successResponse();
-                    Connection conn = Access.pool.checkOut();
+        Connection conn = Access.pool.checkOut();
 
         try {
             String className = object.getSimpleName();
             PreparedStatement pstmt = conn.prepareStatement((String.format(DELETE_OBJECT_SQL, className)), Statement.RETURN_GENERATED_KEYS);
             pstmt.setLong(1, id);
             pstmt.execute();
-            ResultSet rs = pstmt.getGeneratedKeys();
-            rs.next();
+            pstmt.close();
         } catch (SQLException e) {
             System.out.println(e);
-            result =  JSON.failResponse();
-        } finally{
+            result = JSON.failResponse();
+        } finally {
             Access.pool.checkIn(conn);
         }
         return result;
@@ -526,7 +546,7 @@ public class Persistence {
      */
     public static JSONObject list(Class object) {
         JSONObject result = new JSONObject();
-                    Connection conn = Access.pool.checkOut();
+        Connection conn = Access.pool.checkOut();
 
         try {
             String className = object.getSimpleName();
@@ -543,10 +563,12 @@ public class Persistence {
                 }
                 result.put(rs.getObject("id"), obj);
             }
+            rs.close();
+            pstmt.close();
         } catch (SQLException e) {
             System.out.println(e);
-            result =  null;
-        }finally{
+            result = null;
+        } finally {
             Access.pool.checkIn(conn);
         }
         return result;

@@ -9,6 +9,8 @@ import com.tna.common.ObjectPool;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -21,7 +23,7 @@ public class ConnectionPool extends ObjectPool<Connection> {
         Connection conn;
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            String uri = "jdbc:mysql://" + Access.host + "/" + Access.database + "?" + "user=" + Access.username + "&password=" + Access.password + "&autoReconnect=true&connectionTimeout=2000";
+            String uri = "jdbc:mysql://" + Access.host + "/" + Access.database + "?" + "user=" + Access.username + "&password=" + Access.password + "&connectionTimeout=30000";
             conn = DriverManager.getConnection(uri);
 
         } catch (SQLException | ClassNotFoundException e) {
@@ -30,5 +32,8 @@ public class ConnectionPool extends ObjectPool<Connection> {
 
         return conn;
     }
+
+
+   
 
 }

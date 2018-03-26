@@ -47,7 +47,7 @@ public abstract class AuthenticationEndpoint extends BasicEndpoint {
      *
      * @param obj
      * @return Returns the token and key on login success, or throws an error on failure.
-     * @throws Authorisation.UnauthorisedException
+     * @throws com.tna.common.UserAccessControl.UnauthorisedException
      */
     public abstract JSONObject login(JSONObject obj) throws UserAccessControl.UnauthorisedException ;
 

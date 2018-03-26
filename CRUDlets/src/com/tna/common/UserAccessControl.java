@@ -59,14 +59,16 @@ public class UserAccessControl {
             pstmt2.execute();
             result.put("token", token);
             result.put("id", id);
+            rs.close();
+            pstmt.close();
+            pstmt2.close();
         } catch (SQLException ex) {
             throw new UserAccessControl.UnauthorisedException();
-        }finally{
+        } finally {
             Access.pool.checkIn(conn);
-    }
+        }
         return result;
     }
-    
 
     /**
      * Authorises an operation of a certain privilege level.If the privilege
@@ -91,13 +93,18 @@ public class UserAccessControl {
             ResultSet rs = pstmt.executeQuery();
             rs.next();
             if (rs.getInt("level") == 999) {
-                System.out.println("An admin with id : "+rs.getInt("id")+" performed a level-based operation");
+                System.out.println("An admin with id : " + rs.getInt("id") + " performed a level-based operation");
             } else if (level > rs.getInt("level")) {
+                rs.close();
+                pstmt.close();
                 throw new UserAccessControl.UnauthorisedException();
             }
+            rs.close();
+            pstmt.close();
+
         } catch (SQLException ex) {
             throw new UserAccessControl.UnauthorisedException();
-        } finally{
+        } finally {
             Access.pool.checkIn(conn);
         }
 
@@ -124,21 +131,26 @@ public class UserAccessControl {
             ResultSet rs = pstmt.executeQuery();
             rs.next();
             if (rs.getInt("level") == 999) {
-               System.out.println("An admin with id : "+rs.getInt("id")+" performed an id-based operation");
+                System.out.println("An admin with id : " + rs.getInt("id") + " performed an id-based operation");
 
             }
+            rs.close();
+            pstmt.close();
             PreparedStatement pstmt2;
             pstmt2 = conn.prepareStatement(String.format(Persistence.READ_OBJECT_USER_SQL, object.getSimpleName()));
             pstmt2.setObject(1, resource);
             ResultSet rs2 = pstmt2.executeQuery();
             rs2.next();
             if (rs.getLong("id") != rs2.getLong("user")) {
+                rs2.close();
+                pstmt2.close();
                 throw new UserAccessControl.UnauthorisedException();
             }
-
+            rs2.close();
+            pstmt2.close();
         } catch (SQLException ex) {
             throw new UserAccessControl.UnauthorisedException();
-        }finally{
+        } finally {
             Access.pool.checkIn(conn);
         }
     }

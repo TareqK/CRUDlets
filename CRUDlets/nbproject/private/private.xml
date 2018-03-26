@@ -2,6 +2,19 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/home/tareq/Code/CRUDlets/CRUDlets/src/com/tna/endpoints/BasicEndpoint.java</file>
+            <file>file:/home/tareq/Code/CRUDlets/CRUDlets/src/com/tna/data/Persistence.java</file>
+            <file>file:/home/tareq/Code/CRUDlets/CRUDlets/src/com/tna/data/ConnectionPool.java</file>
+            <file>file:/home/tareq/Code/CRUDlets/CRUDlets/src/com/tna/data/Access.java</file>
+            <file>file:/home/tareq/Code/CRUDlets/CRUDlets/src/com/tna/endpoints/AuthorisedEndpoint.java</file>
+            <file>file:/home/tareq/Code/CRUDlets/CRUDlets/src/com/tna/common/ObjectPool.java</file>
+            <file>file:/home/tareq/Code/CRUDlets/CRUDlets/src/com/tna/utils/JSON.java</file>
+            <file>file:/home/tareq/Code/CRUDlets/CRUDlets/src/com/tna/entities/AuthorisedEntity.java</file>
+            <file>file:/home/tareq/Code/CRUDlets/CRUDlets/src/com/tna/endpoints/AuthenticationEndpoint.java</file>
+            <file>file:/home/tareq/Code/CRUDlets/CRUDlets/src/com/tna/entities/BasicEntity.java</file>
+            <file>file:/home/tareq/Code/CRUDlets/CRUDlets/src/com/tna/entities/AuthenticationEntity.java</file>
+            <file>file:/home/tareq/Code/CRUDlets/CRUDlets/src/com/tna/common/UserAccessControl.java</file>
+        </group>
     </open-files>
 </project-private>
