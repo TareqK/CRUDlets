@@ -38,7 +38,7 @@ public class Persistence {
     public static final String READ_OBJECT_USER_SQL = "SELECT user FROM %s WHERE id = ?";
     public static final String LIST_USER_OBJECTS_SQL = "SELECT * FROM %s WHERE user = (SELECT id FROM %s WHERE token = ? )";
     public static final String READ_USER_OBJECT_SQL = "SELECT * FROM %s WHERE id = ? AND user = (SELECT id FROM %s WHERE token = ? ) ";
-    public static final String CREATE_USER_OBJECT_SQL = "INSERT INTO %s (user) VALUES (?) WHERE id = ?; ";
+    public static final String CREATE_USER_OBJECT_SQL = "UPDATE %s set user = ? WHERE id = ?; ";
     public static final String UPDATE_USER_OBJECT_SQL = "UPDATE %s SET %s where id = ? AND user = (SELECT id FROM %s WHERE token = ? )";
     public static final String DELETE_USER_OBJECT_SQL = "DELETE FROM %s WHERE id = ? and user = (SELECT id FROM %s WHERE token = ? )";
 
@@ -55,24 +55,25 @@ public class Persistence {
      * successfully created, returns null otherwise.
      */
     public static JSONObject create(Class object, Class author, JSONObject json) {
-        JSONObject result = JSON.successResponse();
+        JSONObject result;
         Connection conn = Access.pool.checkOut();
         try {
             String authorName = author.getSimpleName();
             String className = object.getSimpleName();
 
             PreparedStatement pstmt2 = conn.prepareStatement(String.format(GET_PRIVILEGE_AND_ID_SQL, authorName));
+            pstmt2.setObject(1,json.get("token"));
             ResultSet rs = pstmt2.executeQuery();
             rs.next();
             long user = rs.getLong("id");
             JSONObject key = Persistence.create(object, json);
             PreparedStatement pstmt = conn.prepareStatement(String.format(CREATE_USER_OBJECT_SQL, className));
             pstmt.setObject(1, user);
-            pstmt.setObject(2, Integer.parseInt(key.get("key").toString()));
-            ResultSet rs2 = pstmt.executeQuery();
+            pstmt.setObject(2, key.get("key"));
+            pstmt.execute();
             rs.close();
-            rs2.close();
             pstmt.close();
+            result = key;
         } catch (SQLException e) {
             System.out.println(e);
             result = null;
@@ -392,7 +393,7 @@ public class Persistence {
         JSONObject result = JSON.successResponse();
         try {
             String className = object.getSimpleName();
-            Field[] fields = getAllFields(object);
+            Field[] fields = object.getDeclaredFields();
             StringBuilder columns = new StringBuilder();
             StringBuilder values = new StringBuilder();
             for (Field field : fields) {
