@@ -38,7 +38,7 @@ public class Persistence {
     public static final String READ_OBJECT_USER_SQL = "SELECT user FROM %s WHERE id = ?";
     public static final String LIST_USER_OBJECTS_SQL = "SELECT * FROM %s WHERE user = (SELECT id FROM %s WHERE token = ? )";
     public static final String READ_USER_OBJECT_SQL = "SELECT * FROM %s WHERE id = ? AND user = (SELECT id FROM %s WHERE token = ? ) ";
-    public static final String CREATE_USER_OBJECT_SQL = "UPDATE %s set user = ? WHERE id = ?; ";
+    public static final String ASSIGN_OBJECT_TO_USER_SQL = "UPDATE %s set user = ? WHERE id = ?; ";
     public static final String UPDATE_USER_OBJECT_SQL = "UPDATE %s SET %s where id = ? AND user = (SELECT id FROM %s WHERE token = ? )";
     public static final String DELETE_USER_OBJECT_SQL = "DELETE FROM %s WHERE id = ? and user = (SELECT id FROM %s WHERE token = ? )";
 
@@ -67,7 +67,7 @@ public class Persistence {
             rs.next();
             long user = rs.getLong("id");
             JSONObject key = Persistence.create(object, json);
-            PreparedStatement pstmt = conn.prepareStatement(String.format(CREATE_USER_OBJECT_SQL, className));
+            PreparedStatement pstmt = conn.prepareStatement(String.format(ASSIGN_OBJECT_TO_USER_SQL, className));
             pstmt.setObject(1, user);
             pstmt.setObject(2, key.get("key"));
             pstmt.execute();
@@ -143,7 +143,7 @@ public class Persistence {
         try {
             String authorName = object.getSimpleName();
             String className = author.getSimpleName();
-            Field[] fields = getAllFields(object);
+            Field[] fields = object.getDeclaredFields();
             StringBuilder values = new StringBuilder();
             Set keySet = json.keySet();
             for (Object key : keySet) {
@@ -237,6 +237,7 @@ public class Persistence {
             pstmt.setObject(1, json.get("token"));
             ResultSet rs = pstmt.executeQuery();
             Field[] fields = getAllFields(object);
+            int i = 0;
             while (rs.next()) {
                 JSONObject temp = new JSONObject();
                 for (Field field : fields) {
@@ -245,7 +246,8 @@ public class Persistence {
                     } catch (IllegalArgumentException ex) {
                     }
                 }
-                result.put(rs.getObject("id"), temp);
+                result.put(i, temp);
+                i++;
             }
             rs.close();
             pstmt.close();
@@ -478,7 +480,7 @@ public class Persistence {
         JSONObject response = JSON.successResponse();
         try {
             String className = object.getSimpleName();
-            Field[] fields = getAllFields(object);
+            Field[] fields = object.getDeclaredFields();
             StringBuilder values = new StringBuilder();
             Set keySet = json.keySet();
             for (Object key : keySet) {
@@ -554,6 +556,7 @@ public class Persistence {
             PreparedStatement pstmt = conn.prepareStatement((String.format(LIST_OBJECT_SQL, className)), Statement.RETURN_GENERATED_KEYS);
             ResultSet rs = pstmt.executeQuery();
             Field[] fields = getAllFields(object);
+            int i = 0;
             while (rs.next()) {
                 JSONObject obj = new JSONObject();
                 for (Field field : fields) {
@@ -562,7 +565,8 @@ public class Persistence {
                     } catch (IllegalArgumentException ex) {
                     }
                 }
-                result.put(rs.getObject("id"), obj);
+                result.put(i, obj);
+                i++;
             }
             rs.close();
             pstmt.close();
