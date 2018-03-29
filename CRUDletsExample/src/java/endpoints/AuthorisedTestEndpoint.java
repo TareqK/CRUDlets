@@ -23,28 +23,28 @@ import org.json.simple.JSONObject;
 public class AuthorisedTestEndpoint extends AuthorisedEndpoint{
 
     @Override
-    public JSONObject doList(JSONObject obj) throws UserAccessControl.UnauthorisedException {
-        return Persistence.list(TestEntity.class,User.class,obj);
+    public JSONObject doList(String token) throws UserAccessControl.UnauthorisedException {
+        return Persistence.list(TestEntity.class,User.class,token);
     }
 
     @Override
-    public JSONObject doCreate(JSONObject json) throws UserAccessControl.UnauthorisedException {
-        return Persistence.create(TestEntity.class,User.class,json);
+    public JSONObject doCreate(JSONObject json, String token) throws UserAccessControl.UnauthorisedException {
+        return Persistence.create(TestEntity.class,User.class,json,token);
     }
 
     @Override
-    public JSONObject doUpdate(JSONObject json, int resource) throws UserAccessControl.UnauthorisedException {
-        return Persistence.update(TestEntity.class,User.class,json,resource);
+    public JSONObject doUpdate(JSONObject json, int resource, String token) throws UserAccessControl.UnauthorisedException {
+        return Persistence.update(TestEntity.class,User.class,json,resource,token);
     }
 
     @Override
-    public JSONObject doRead(JSONObject json, int resource) throws UserAccessControl.UnauthorisedException {
-        return Persistence.read(TestEntity.class,User.class,json,resource);
+    public JSONObject doRead(int resource, String token) throws UserAccessControl.UnauthorisedException {
+        return Persistence.read(TestEntity.class,User.class,resource, token);
     }
 
     @Override
-    public JSONObject doDelete(JSONObject json, int resource) throws UserAccessControl.UnauthorisedException {
-        return Persistence.delete(TestEntity.class,User.class,json,resource);
+    public JSONObject doDelete(int resource, String token) throws UserAccessControl.UnauthorisedException {
+        return Persistence.delete(TestEntity.class,User.class,resource, token);
     }
 
 }

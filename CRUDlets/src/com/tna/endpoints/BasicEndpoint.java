@@ -141,7 +141,7 @@ public abstract class BasicEndpoint extends HttpServlet {
         }
        try (PrintWriter printWriter = response.getWriter()) {
              if (obj == null) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST);//send a bad request
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);//send a bad request
                 return;
             } else {
                 printWriter.print(obj);
