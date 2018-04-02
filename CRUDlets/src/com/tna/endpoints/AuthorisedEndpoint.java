@@ -38,9 +38,9 @@ public abstract class AuthorisedEndpoint extends HttpServlet {
             Integer resource = Parser.parseURL(request);
             String token = request.getParameter("token");
             try {
-                if(token  ==null){
-                throw new UserAccessControl.UnauthorisedException();
-            }
+                if (token == null) {
+                    throw new UserAccessControl.UnauthorisedException();
+                }
                 if (resource == null) {
                     obj = doList(token);
                 } else {
@@ -55,15 +55,17 @@ public abstract class AuthorisedEndpoint extends HttpServlet {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);//send a bad request
             return;
         }
-        //send a bad request
-        try (PrintWriter printWriter = response.getWriter()) {
-            if (obj == null) {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND);//send a bad request
-            } else {
+        if (obj == null) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);//send a bad request
+            return;
+        } else {
+            //send a bad request
+            try (PrintWriter printWriter = response.getWriter()) {
                 printWriter.print(obj);
-            }
-        }
 
+            }
+
+        }
     }
 
     /**
@@ -81,21 +83,23 @@ public abstract class AuthorisedEndpoint extends HttpServlet {
         try {
             JSONObject json = Parser.parseRequest(request);
             String token = request.getParameter("token");
-            if(token==null){
+            if (token == null) {
                 throw new UserAccessControl.UnauthorisedException();
             }
             obj = doCreate(json, token);
 
         } catch (Parser.RequestParseException ex) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);//send a bad request
+            return;
         } catch (UserAccessControl.UnauthorisedException ex) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN);//
             return;
         }
-        try (PrintWriter printWriter = response.getWriter()) {
-            if (obj == null) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST);//send a bad request
-            } else {
+        if (obj == null) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN);//send a bad request
+            return;
+        } else {
+            try (PrintWriter printWriter = response.getWriter()) {
                 printWriter.print(obj);
             }
         }
@@ -113,12 +117,12 @@ public abstract class AuthorisedEndpoint extends HttpServlet {
     protected void doPut(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("application/json;charset=UTF-8");
-        JSONObject obj ;
+        JSONObject obj;
         try {
             Integer resource = Parser.parseURL(request);
             JSONObject json = Parser.parseRequest(request);
             String token = request.getParameter("token");
-            if(token==null){
+            if (token == null) {
                 throw new UserAccessControl.UnauthorisedException();
             }
 
@@ -135,14 +139,16 @@ public abstract class AuthorisedEndpoint extends HttpServlet {
             response.sendError(HttpServletResponse.SC_FORBIDDEN);//
             return;
         }
-        try (PrintWriter printWriter = response.getWriter()) {
-            if (obj == null) {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND);//send a bad request
-            } else {
+        if (obj == null) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN);//send a bad request
+            return;
+        } else {
+            try (PrintWriter printWriter = response.getWriter()) {
+
                 printWriter.print(obj);
+
             }
         }
-
     }
 
     /**
@@ -160,7 +166,7 @@ public abstract class AuthorisedEndpoint extends HttpServlet {
         try {
             Integer resource = Parser.parseURL(request);
             String token = request.getParameter("token");
-            if(token==null){
+            if (token == null) {
                 throw new UserAccessControl.UnauthorisedException();
             }
             if (resource == null) {
@@ -176,15 +182,16 @@ public abstract class AuthorisedEndpoint extends HttpServlet {
             response.sendError(HttpServletResponse.SC_FORBIDDEN);//
             return;
         }
-        //send a bad request
+        if (obj == null) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);//send a bad request
+            return;
+        } else {
+            //send a bad request
 
-        try (PrintWriter printWriter = response.getWriter()) {
-            if (obj == null) {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND);//send a bad request
-            } else {
+            try (PrintWriter printWriter = response.getWriter()) {
                 printWriter.print(obj);
-            }
 
+            }
         }
     }
 
@@ -213,7 +220,7 @@ public abstract class AuthorisedEndpoint extends HttpServlet {
      * code in JSON format.
      * @throws com.tna.common.Authorisation.UnauthorisedException
      */
-    public abstract JSONObject doUpdate(JSONObject json, int resource , String token) throws UserAccessControl.UnauthorisedException;
+    public abstract JSONObject doUpdate(JSONObject json, int resource, String token) throws UserAccessControl.UnauthorisedException;
 
     /**
      *
@@ -233,6 +240,6 @@ public abstract class AuthorisedEndpoint extends HttpServlet {
      * code in JSON format.
      * @throws com.tna.common.Authorisation.UnauthorisedException
      */
-    public abstract JSONObject doDelete(int resource , String token) throws UserAccessControl.UnauthorisedException;
+    public abstract JSONObject doDelete(int resource, String token) throws UserAccessControl.UnauthorisedException;
 
 }

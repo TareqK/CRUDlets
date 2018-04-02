@@ -5,6 +5,7 @@
  */
 package com.tna.data;
 
+import com.tna.common.UserAccessControl;
 import com.tna.utils.JSON;
 import java.lang.reflect.Field;
 import java.sql.Connection;
@@ -54,7 +55,7 @@ public class Persistence {
      * @return Returns a JSONObject with a success message if the object was
      * successfully created, returns null otherwise.
      */
-    public static JSONObject create(Class object, Class author, JSONObject json, String token) {
+    public static JSONObject create(Class object, Class author, JSONObject json, String token) throws UserAccessControl.UnauthorisedException  {
         JSONObject result;
         Connection conn = Access.pool.checkOut();
         try {
@@ -64,6 +65,7 @@ public class Persistence {
             PreparedStatement pstmt2 = conn.prepareStatement(String.format(GET_PRIVILEGE_AND_ID_SQL, authorName));
             pstmt2.setObject(1, token);
             ResultSet rs = pstmt2.executeQuery();
+
             rs.next();
             long user = rs.getLong("id");
             JSONObject key = Persistence.create(object, json);
@@ -241,7 +243,11 @@ public class Persistence {
             ResultSet rs = pstmt.executeQuery();
             Field[] fields = getAllFields(object);
             int i = 0;
-            while (rs.next()) {
+            if(rs.next()==false){
+                throw new SQLException();
+                
+            }
+            do {
                 JSONObject temp = new JSONObject();
                 for (Field field : fields) {
                     try {
@@ -251,7 +257,7 @@ public class Persistence {
                 }
                 result.put(i, temp);
                 i++;
-            }
+            } while (rs.next()) ;
             rs.close();
             pstmt.close();
         } catch (SQLException e) {
@@ -567,7 +573,10 @@ public class Persistence {
             ResultSet rs = pstmt.executeQuery();
             Field[] fields = getAllFields(object);
             int i = 0;
-            while (rs.next()) {
+            if(rs.next()==false){
+                throw new SQLException();
+            }
+           do {
                 JSONObject obj = new JSONObject();
                 for (Field field : fields) {
                     try {
@@ -577,7 +586,7 @@ public class Persistence {
                 }
                 result.put(i, obj);
                 i++;
-            }
+            } while (rs.next());
             rs.close();
             pstmt.close();
         } catch (SQLException e) {
