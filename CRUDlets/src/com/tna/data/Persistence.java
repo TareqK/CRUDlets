@@ -5,6 +5,8 @@
  */
 package com.tna.data;
 
+import com.tna.common.AccessError;
+import com.tna.common.AccessError.ERROR_TYPE;
 import com.tna.common.UserAccessControl;
 import com.tna.utils.JSON;
 import java.lang.reflect.Field;
@@ -44,6 +46,7 @@ public class Persistence {
     public static final String DELETE_USER_OBJECT_SQL = "DELETE FROM %s WHERE id = ? and user = (SELECT id FROM %s WHERE token = ? )";
 
     public static final String SEARCH_BY_PROPERTY_SQL = "SELECT * from %s WHERE %s";
+    public static final String SELECT_OBJECT_USER = "SELECT user from %s where id = ?";
 
     /**
      * Creates a new object and ties it to the user. Returns a success message
@@ -52,35 +55,43 @@ public class Persistence {
      * @param object
      * @param author
      * @param json
+     * @param token
      * @return Returns a JSONObject with a success message if the object was
      * successfully created, returns null otherwise.
+     * @throws com.tna.common.AccessError
      */
-    public static JSONObject create(Class object, Class author, JSONObject json, String token) throws UserAccessControl.UnauthorisedException  {
+    public static JSONObject create(Class object, Class author, JSONObject json, String token) throws AccessError {
         JSONObject result;
         Connection conn = Access.pool.checkOut();
         try {
             String authorName = author.getSimpleName();
             String className = object.getSimpleName();
 
-            PreparedStatement pstmt2 = conn.prepareStatement(String.format(GET_PRIVILEGE_AND_ID_SQL, authorName));
-            pstmt2.setObject(1, token);
-            ResultSet rs = pstmt2.executeQuery();
+            try (PreparedStatement pstmt2 = conn.prepareStatement(String.format(GET_PRIVILEGE_AND_ID_SQL, authorName))) {
+                pstmt2.setObject(1, token);
+                JSONObject key;
 
-            rs.next();
-            long user = rs.getLong("id");
-            JSONObject key = Persistence.create(object, json);
-            PreparedStatement pstmt = conn.prepareStatement(String.format(ASSIGN_OBJECT_TO_USER_SQL, className));
-            pstmt.setObject(1, user);
-            pstmt.setObject(2, key.get("key"));
-            pstmt.execute();
-            rs.close();
-            pstmt.close();
-            result = key;
+                try (ResultSet rs = pstmt2.executeQuery()) {
+                    if (!rs.next()) {
+                        throw new AccessError(ERROR_TYPE.USER_NOT_AUTHENTICATED);
+                    }
+                    long user = rs.getLong("id");
+                    key = Persistence.create(object, json);
+
+                    try (PreparedStatement pstmt = conn.prepareStatement(String.format(ASSIGN_OBJECT_TO_USER_SQL, className))) {
+                        pstmt.setObject(1, user);
+                        pstmt.setObject(2, key.get("key"));
+                        if (pstmt.executeUpdate() == 0) {
+                            throw new AccessError(ERROR_TYPE.ENTITY_NOT_FOUND);
+                        }
+                    }
+                }
+                result = key;
+            }
         } catch (SQLException e) {
             System.out.println(e);
-            result = null;
+            throw new AccessError(ERROR_TYPE.OPERATION_FAILED);
         } finally {
-
             Access.pool.checkIn(conn);
         }
         return result;
@@ -97,34 +108,18 @@ public class Persistence {
      * @return returns a JSONObject of the object called if it belongs to the
      * user, returns null otherwise.
      */
-    public static JSONObject read(Class object, Class author, long resource, String token) {
-        JSONObject result = new JSONObject();
+    public static JSONObject read(Class object, Class author, long resource, String token) throws AccessError {
         Connection conn = Access.pool.checkOut();
-
         try {
             String authorName = author.getSimpleName();
             String className = object.getSimpleName();
-            PreparedStatement pstmt = conn.prepareStatement((String.format(READ_USER_OBJECT_SQL, className, authorName)), Statement.RETURN_GENERATED_KEYS);
-            pstmt.setObject(1, resource);
-            pstmt.setObject(2, token);
-            ResultSet rs = pstmt.executeQuery();
-            Field[] fields = getAllFields(object);
-            rs.next();
-            for (Field field : fields) {
-                try {
-                    result.put(field.getName(), rs.getObject(field.getName()));
-                } catch (IllegalArgumentException ex) {
-                }
-            }
-            rs.close();
-            pstmt.close();
-        } catch (SQLException e) {
-            System.out.println(e);
-            result = null;
+            UserAccessControl.authAccess(object, author, token, resource);
+            JSONObject result = Persistence.read(object, resource);
+            return result;
         } finally {
             Access.pool.checkIn(conn);
         }
-        return result;
+
     }
 
     /**
@@ -138,54 +133,18 @@ public class Persistence {
      * @return returns a JSONObject with the updated object if it belongs to the
      * user, returns null otherwise.
      */
-    public static JSONObject update(Class object, Class author, JSONObject json, long resource, String token) {
-        JSONObject result = null;
+    public static JSONObject update(Class object, Class author, JSONObject json, long resource, String token) throws AccessError {
         Connection conn = Access.pool.checkOut();
-        PreparedStatement pstmt = null;
         try {
-
             String authorName = author.getSimpleName();
             String className = object.getSimpleName();
-
-            Field[] fields = object.getDeclaredFields();
-            StringBuilder values = new StringBuilder();
-            Set keySet = json.keySet();
-
-            for (Object key : keySet) {
-                try {
-                    object.getDeclaredField(key.toString());
-                    values.append(key.toString()).append(" = ?,");
-                } catch (NoSuchFieldException | SecurityException ex) {
-                    throw new SQLException();
-                }
-            }
-            values.deleteCharAt((values.length() - 1));
-            pstmt = conn.prepareStatement((String.format(UPDATE_USER_OBJECT_SQL, className, values.toString(), authorName)), Statement.RETURN_GENERATED_KEYS);
-            int i = 1;
-            for (Object key : keySet) {
-                try {
-                    pstmt.setObject(i, json.get(key));
-
-                } catch (IllegalArgumentException ex) {
-                    throw new SQLException();
-                }
-                i++;
-            }
-            pstmt.setObject(i, resource);
-            pstmt.setObject(i + 1, token);
-            int effected = pstmt.executeUpdate();
-            pstmt.close();
-            if (effected == 0) {
-                result = null;
-            } else {
-                result = JSON.successResponse();
-            }
-        } catch (SQLException e) {
-            System.out.println(e);
+            UserAccessControl.authAccess(object, author, token, resource);
+            JSONObject result = Persistence.update(object, resource, json);
+            return result;
         } finally {
             Access.pool.checkIn(conn);
         }
-        return result;
+
     }
 
     /**
@@ -199,28 +158,17 @@ public class Persistence {
      * @return returns a JSONObject with a success message if the object belongs
      * to the user, returns null otherwise.
      */
-    public static JSONObject delete(Class object, Class author, long resource, String token) {
+    public static JSONObject delete(Class object, Class author, long resource, String token) throws AccessError {
         Connection conn = Access.pool.checkOut();
-
-        JSONObject result = JSON.successResponse();
         try {
             String authorName = author.getSimpleName();
             String className = object.getSimpleName();
-            PreparedStatement pstmt = conn.prepareStatement((String.format(DELETE_USER_OBJECT_SQL, className, authorName)), Statement.RETURN_GENERATED_KEYS);
-            pstmt.setObject(1, resource);
-            pstmt.setObject(2, token);
-            int effected = pstmt.executeUpdate();
-            pstmt.close();
-            if (effected == 0) {
-                result = null;
-            }
-        } catch (SQLException e) {
-            System.out.println(e);
-            result = null;
+            UserAccessControl.authAccess(object, author, token, resource);
+            JSONObject result = Persistence.delete(object, resource);
+            return result;
         } finally {
             Access.pool.checkIn(conn);
         }
-        return result;
     }
 
     /**
@@ -231,38 +179,38 @@ public class Persistence {
      * @param json
      * @return returns a JSONObject of the user's associated object of this type
      */
-    public static JSONObject list(Class object, Class author, String token) {
+    public static JSONObject list(Class object, Class author, String token) throws AccessError {
         JSONObject result = new JSONObject();
         Connection conn = Access.pool.checkOut();
 
         try {
             String className = object.getSimpleName();
             String authorName = author.getSimpleName();
-            PreparedStatement pstmt = conn.prepareStatement((String.format(LIST_USER_OBJECTS_SQL, className, authorName)), Statement.RETURN_GENERATED_KEYS);
-            pstmt.setObject(1, token);
-            ResultSet rs = pstmt.executeQuery();
-            Field[] fields = getAllFields(object);
-            int i = 0;
-            if(rs.next()==false){
-                throw new SQLException();
-                
-            }
-            do {
-                JSONObject temp = new JSONObject();
-                for (Field field : fields) {
-                    try {
-                        temp.put(field.getName(), rs.getObject(field.getName()));
-                    } catch (IllegalArgumentException ex) {
-                    }
+            UserAccessControl.checkToken(author, token);
+            try (PreparedStatement pstmt = conn.prepareStatement((String.format(LIST_USER_OBJECTS_SQL, className, authorName)), Statement.RETURN_GENERATED_KEYS)) {
+                pstmt.setObject(1, token);
+                try(ResultSet rs = pstmt.executeQuery()){
+                Field[] fields = getAllFields(object);
+                int i = 0;
+                if (rs.next() == false) {
+                    throw new AccessError(ERROR_TYPE.ENTITY_NOT_FOUND);
+                    
                 }
-                result.put(i, temp);
-                i++;
-            } while (rs.next()) ;
-            rs.close();
-            pstmt.close();
+                do {
+                    JSONObject temp = new JSONObject();
+                    for (Field field : fields) {
+                        try {
+                            temp.put(field.getName(), rs.getObject(field.getName()));
+                        } catch (IllegalArgumentException ex) {
+                        }
+                    }
+                    result.put(i, temp);
+                    i++;
+                } while (rs.next());
+            }}
         } catch (SQLException e) {
             System.out.println(e);
-            result = null;
+            throw new AccessError(ERROR_TYPE.OPERATION_FAILED);
         } finally {
             Access.pool.checkIn(conn);
         }
@@ -397,7 +345,7 @@ public class Persistence {
      * @return returns a success code if creation was successful, returns null
      * otherwise.
      */
-    public static JSONObject create(Class object, JSONObject json) {
+    public static JSONObject create(Class object, JSONObject json) throws AccessError {
         Connection conn = Access.pool.checkOut();
 
         JSONObject result = JSON.successResponse();
@@ -413,7 +361,7 @@ public class Persistence {
             }
             columns.deleteCharAt((columns.length() - 1));
             values.deleteCharAt((values.length() - 1));
-            PreparedStatement pstmt = conn.prepareStatement((String.format(CREATE_OBJECT_SQL, className, columns.toString(), values.toString())), Statement.RETURN_GENERATED_KEYS);
+            try(PreparedStatement pstmt = conn.prepareStatement((String.format(CREATE_OBJECT_SQL, className, columns.toString(), values.toString())), Statement.RETURN_GENERATED_KEYS)){
             int i = 1;
             for (Field field : fields) {
                 try {
@@ -423,14 +371,16 @@ public class Persistence {
                 i++;
             }
             pstmt.execute();
-            ResultSet rs = pstmt.getGeneratedKeys();
-            rs.next();
+            try(ResultSet rs = pstmt.getGeneratedKeys()){
+            if(!rs.next()){
+                throw new AccessError(ERROR_TYPE.ENTITY_NOT_FOUND);
+            }
             result.put("key", rs.getLong(1));
-            rs.close();
-            pstmt.close();
+            }
+            }
         } catch (SQLException e) {
             System.out.println(e);
-            result = null;
+            throw new AccessError(ERROR_TYPE.OPERATION_FAILED);
         } finally {
             Access.pool.checkIn(conn);
         }
@@ -445,29 +395,28 @@ public class Persistence {
      * @return returns a JSONObject if the object exists, returns null
      * otherwise.
      */
-    public static JSONObject read(Class object, long id) {
+    public static JSONObject read(Class object, long id) throws AccessError {
         JSONObject result = new JSONObject();
         Connection conn = Access.pool.checkOut();
-
         try {
             String className = object.getSimpleName();
-            PreparedStatement pstmt;
-            pstmt = conn.prepareStatement((String.format(READ_OBJECT_SQL, className)), Statement.RETURN_GENERATED_KEYS);
+            try(PreparedStatement pstmt = conn.prepareStatement((String.format(READ_OBJECT_SQL, className)), Statement.RETURN_GENERATED_KEYS)){
             Field[] fields = getAllFields(object);
             pstmt.setLong(1, id);
-            ResultSet rs = pstmt.executeQuery();
-            rs.next();
+            try(ResultSet rs = pstmt.executeQuery()){
+            if(!rs.next()){
+                throw new AccessError(ERROR_TYPE.ENTITY_NOT_FOUND);
+            }
             for (Field field : fields) {
                 try {
                     result.put(field.getName(), rs.getObject(field.getName()));
                 } catch (IllegalArgumentException ex) {
                 }
             }
-            rs.close();
-            pstmt.close();
+            }}
         } catch (SQLException e) {
             System.out.println(e);
-            result = null;
+            throw new AccessError(ERROR_TYPE.OPERATION_FAILED);
         } finally {
             Access.pool.checkIn(conn);
         }
@@ -483,7 +432,7 @@ public class Persistence {
      * @return returns a JSONObject with a success message if the object was
      * updated, returns null otherwise.
      */
-    public static JSONObject update(Class object, long id, JSONObject json) {
+    public static JSONObject update(Class object, long id, JSONObject json) throws AccessError {
         Connection conn = Access.pool.checkOut();
         JSONObject result = null;
         try {
@@ -496,11 +445,11 @@ public class Persistence {
                     object.getDeclaredField(key.toString());
                     values.append(key.toString()).append(" = ?,");
                 } catch (NoSuchFieldException | SecurityException ex) {
-                    throw new SQLException();
+                    throw new AccessError(ERROR_TYPE.OPERATION_FAILED);
                 }
             }
             values.deleteCharAt((values.length() - 1));
-            PreparedStatement pstmt = conn.prepareStatement((String.format(UPDATE_OBJECT_SQL, className, values.toString())), Statement.RETURN_GENERATED_KEYS);
+            try(PreparedStatement pstmt = conn.prepareStatement((String.format(UPDATE_OBJECT_SQL, className, values.toString())), Statement.RETURN_GENERATED_KEYS)){
             int i = 1;
             for (Object key : keySet) {
                 try {
@@ -511,15 +460,14 @@ public class Persistence {
             }
             pstmt.setObject(i, id);
             int effected = pstmt.executeUpdate();
-            pstmt.close();
             if (effected == 0) {
                 result = null;
             } else {
                 result = JSON.successResponse();
             }
-        } catch (SQLException e) {
+        } }catch (SQLException e) {
             System.out.println(e);
-            result = null;
+            throw new AccessError(ERROR_TYPE.OPERATION_FAILED);
         } finally {
             Access.pool.checkIn(conn);
         }
@@ -534,20 +482,20 @@ public class Persistence {
      * @return returns a JSONObject with a success message if deletion worked,
      * returns null otherwise.
      */
-    public static JSONObject delete(Class object, long id) {
+    public static JSONObject delete(Class object, long id) throws AccessError {
         JSONObject result = JSON.successResponse();
         Connection conn = Access.pool.checkOut();
 
         try {
             String className = object.getSimpleName();
-            PreparedStatement pstmt = conn.prepareStatement((String.format(DELETE_OBJECT_SQL, className)), Statement.RETURN_GENERATED_KEYS);
+            try(PreparedStatement pstmt = conn.prepareStatement((String.format(DELETE_OBJECT_SQL, className)), Statement.RETURN_GENERATED_KEYS)){
             pstmt.setLong(1, id);
             int effected = pstmt.executeUpdate();
             pstmt.close();
             if (effected == 0) {
-                result = null;
+                throw new AccessError(ERROR_TYPE.ENTITY_NOT_FOUND);
             }
-        } catch (SQLException e) {
+        } }catch (SQLException e) {
             System.out.println(e);
             result = null;
         } finally {
@@ -563,35 +511,36 @@ public class Persistence {
      * @return returns a JSONObject of JSONObjects of objects with their Ids.
      * Returns null if there are no objects.
      */
-    public static JSONObject list(Class object) {
+    public static JSONObject list(Class object) throws AccessError {
         JSONObject result = new JSONObject();
         Connection conn = Access.pool.checkOut();
 
         try {
             String className = object.getSimpleName();
-            PreparedStatement pstmt = conn.prepareStatement((String.format(LIST_OBJECT_SQL, className)), Statement.RETURN_GENERATED_KEYS);
-            ResultSet rs = pstmt.executeQuery();
-            Field[] fields = getAllFields(object);
-            int i = 0;
-            if(rs.next()==false){
-                throw new SQLException();
-            }
-           do {
-                JSONObject obj = new JSONObject();
-                for (Field field : fields) {
-                    try {
-                        obj.put(field.getName(), rs.getObject(field.getName()));
-                    } catch (IllegalArgumentException ex) {
+            try (PreparedStatement pstmt = conn.prepareStatement((String.format(LIST_OBJECT_SQL, className)), Statement.RETURN_GENERATED_KEYS)) {
+                try (ResultSet rs = pstmt.executeQuery()) {
+                    Field[] fields = getAllFields(object);
+                    int i = 0;
+                    if (rs.next() == false) {
+                        throw new AccessError(ERROR_TYPE.ENTITY_NOT_FOUND);
                     }
+                    do {
+                        JSONObject obj = new JSONObject();
+                        for (Field field : fields) {
+                            try {
+                                obj.put(field.getName(), rs.getObject(field.getName()));
+                            } catch (IllegalArgumentException ex) {
+                            }
+                        }
+                        result.put(i, obj);
+                        i++;
+                    } while (rs.next());
+
                 }
-                result.put(i, obj);
-                i++;
-            } while (rs.next());
-            rs.close();
-            pstmt.close();
+            }
         } catch (SQLException e) {
             System.out.println(e);
-            result = null;
+            throw new AccessError(ERROR_TYPE.OPERATION_FAILED);
         } finally {
             Access.pool.checkIn(conn);
         }
@@ -610,6 +559,21 @@ public class Persistence {
             fields.addAll(Arrays.asList(c.getDeclaredFields()));
         }
         return (fields.toArray(new Field[fields.size()]));
+    }
+
+    private static String buildValues(Class object, JSONObject json) {
+        StringBuilder values = new StringBuilder();
+        Set keySet = json.keySet();
+        for (Object key : keySet) {
+            try {
+                object.getDeclaredField(key.toString());
+                values.append(key.toString()).append(" = ?,");
+            } catch (NoSuchFieldException | SecurityException ex) {
+
+            }
+        }
+        values.deleteCharAt((values.length() - 1));
+        return values.toString();
     }
 
 }

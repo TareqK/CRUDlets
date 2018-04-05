@@ -7,6 +7,8 @@ package com.tna.common;
 
 import com.tna.data.Access;
 import com.tna.data.Persistence;
+import static com.tna.data.Persistence.GET_PRIVILEGE_AND_ID_SQL;
+import static com.tna.data.Persistence.SELECT_OBJECT_USER;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -116,40 +118,67 @@ public class UserAccessControl {
      * any entity. If the user attempts to access an entity that is not his,
      * then an error is thrown.
      *
-     * @param obj
      * @param resource
+     * @param token
      * @param object
      * @param author
-     * @throws UserAccessControl.UnauthorisedException
+     * @throws com.tna.common.AccessError
      */
-    public static void authAccess(Class author, JSONObject obj, int resource, Class object) throws UserAccessControl.UnauthorisedException {
+    public static void authAccess(Class object, Class author, String token, long resource) throws AccessError {
         Connection conn = Access.pool.checkOut();
         try {
-            PreparedStatement pstmt;
-            pstmt = conn.prepareStatement(String.format(Persistence.GET_PRIVILEGE_AND_ID_SQL, author.getSimpleName()));
-            pstmt.setObject(1, obj.get("token"));
-            ResultSet rs = pstmt.executeQuery();
-            rs.next();
-            if (rs.getInt("level") == 999) {
-                System.out.println("An admin with id : " + rs.getInt("id") + " performed an id-based operation");
+            String authorName = author.getSimpleName();
+            String className = object.getSimpleName();
+            long user;
+            try (PreparedStatement pstmt = conn.prepareStatement(String.format(GET_PRIVILEGE_AND_ID_SQL, authorName))) {
+                pstmt.setObject(1, token);
+
+                try (ResultSet rs = pstmt.executeQuery()) {
+                    if (!rs.next()) {
+                        throw new AccessError(AccessError.ERROR_TYPE.USER_NOT_AUTHENTICATED);
+                    }
+                    user = rs.getLong("id");
+                }
+            }
+            try (PreparedStatement pstmt2 = conn.prepareStatement(String.format(SELECT_OBJECT_USER, className))){
+                pstmt2.setObject(1, resource);
+                
+                try (ResultSet rs2 = pstmt2.executeQuery()) {
+                    if (!rs2.next()) {
+                        throw new AccessError(AccessError.ERROR_TYPE.ENTITY_NOT_FOUND);
+                    } else if (rs2.getLong("user") != user) {
+                        throw new AccessError(AccessError.ERROR_TYPE.USER_NOT_AUTHORISED);
+                    }
+                }
+            }
+
+        } catch (SQLException ex) {
+            System.out.println(ex);
+            throw new AccessError(AccessError.ERROR_TYPE.OPERATION_FAILED);
+
+        } finally {
+            Access.pool.checkIn(conn);
+        }
+    }
+
+    public static void checkToken(Class author, String token) throws AccessError {
+        Connection conn = Access.pool.checkOut();
+        try {
+            String authorName = author.getSimpleName();
+
+            try (PreparedStatement pstmt = conn.prepareStatement(String.format(GET_PRIVILEGE_AND_ID_SQL, authorName))) {
+                pstmt.setObject(1, token);
+
+                try (ResultSet rs = pstmt.executeQuery()) {
+                    if (!rs.next()) {
+                        throw new AccessError(AccessError.ERROR_TYPE.USER_NOT_AUTHENTICATED);
+                    }
+                }
 
             }
-            rs.close();
-            pstmt.close();
-            PreparedStatement pstmt2;
-            pstmt2 = conn.prepareStatement(String.format(Persistence.READ_OBJECT_USER_SQL, object.getSimpleName()));
-            pstmt2.setObject(1, resource);
-            ResultSet rs2 = pstmt2.executeQuery();
-            rs2.next();
-            if (rs.getLong("id") != rs2.getLong("user")) {
-                rs2.close();
-                pstmt2.close();
-                throw new UserAccessControl.UnauthorisedException();
-            }
-            rs2.close();
-            pstmt2.close();
         } catch (SQLException ex) {
-            throw new UserAccessControl.UnauthorisedException();
+            throw new AccessError(AccessError.ERROR_TYPE.OPERATION_FAILED);
+
         } finally {
             Access.pool.checkIn(conn);
         }

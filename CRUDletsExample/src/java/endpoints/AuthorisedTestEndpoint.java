@@ -1,6 +1,6 @@
 package endpoints;
 
-
+import com.tna.common.AccessError;
 import com.tna.common.UserAccessControl;
 import com.tna.data.Persistence;
 import com.tna.endpoints.AuthorisedEndpoint;
@@ -14,37 +14,36 @@ import org.json.simple.JSONObject;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 /**
  *
  * @author tareq
  */
 @WebServlet("/testauth/*")
-public class AuthorisedTestEndpoint extends AuthorisedEndpoint{
+public class AuthorisedTestEndpoint extends AuthorisedEndpoint {
 
     @Override
-    public JSONObject doList(String token) throws UserAccessControl.UnauthorisedException {
-        return Persistence.list(TestEntity.class,User.class,token);
+    public JSONObject doList(String token) throws AccessError {
+        return Persistence.list(TestEntity.class, User.class, token);
     }
 
     @Override
-    public JSONObject doCreate(JSONObject json, String token) throws UserAccessControl.UnauthorisedException {
-        return Persistence.create(TestEntity.class,User.class,json,token);
+    public JSONObject doCreate(JSONObject json, String token) throws AccessError {
+        return Persistence.create(TestEntity.class, User.class, json, token);
     }
 
     @Override
-    public JSONObject doUpdate(JSONObject json, int resource, String token) throws UserAccessControl.UnauthorisedException {
-        return Persistence.update(TestEntity.class,User.class,json,resource,token);
+    public JSONObject doUpdate(JSONObject json, int resource, String token) throws AccessError {
+        return Persistence.update(TestEntity.class, User.class, json, resource, token);
     }
 
     @Override
-    public JSONObject doRead(int resource, String token) throws UserAccessControl.UnauthorisedException {
-        return Persistence.read(TestEntity.class,User.class,resource, token);
+    public JSONObject doRead(int resource, String token) throws AccessError {
+        return Persistence.read(TestEntity.class, User.class, resource, token);
     }
 
     @Override
-    public JSONObject doDelete(int resource, String token) throws UserAccessControl.UnauthorisedException {
-        return Persistence.delete(TestEntity.class,User.class,resource, token);
+    public JSONObject doDelete(int resource, String token) throws AccessError {
+        return Persistence.delete(TestEntity.class, User.class, resource, token);
     }
 
 }
