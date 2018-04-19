@@ -5,6 +5,7 @@
  */
 package com.tna.common;
 
+import com.tna.common.AccessError.ERROR_TYPE;
 import com.tna.data.Access;
 import com.tna.data.Persistence;
 import static com.tna.data.Persistence.GET_PRIVILEGE_AND_ID_SQL;
@@ -41,7 +42,7 @@ public class UserAccessControl {
      * @return a JSONObject with the token and user id
      * @throws UserAccessControl.UnauthorisedException
      */
-    public static JSONObject login(Class author, JSONObject obj) throws UserAccessControl.UnauthorisedException {
+    public static JSONObject login(Class author, JSONObject obj) throws AccessError {
         Connection conn = Access.pool.checkOut();
         JSONObject result = new JSONObject();
         try {
@@ -51,7 +52,7 @@ public class UserAccessControl {
             ResultSet rs = pstmt.executeQuery();
             rs.next();
             if (!rs.getString("password").equals(obj.get("password").toString())) {
-                throw new UserAccessControl.UnauthorisedException();
+                throw new AccessError(ERROR_TYPE.USER_NOT_AUTHORISED);
             }
             PreparedStatement pstmt2 = conn.prepareStatement(String.format(Persistence.SET_TOKEN_SQL, author.getSimpleName()));
             String token = UUID.randomUUID().toString();
@@ -65,7 +66,7 @@ public class UserAccessControl {
             pstmt.close();
             pstmt2.close();
         } catch (SQLException ex) {
-            throw new UserAccessControl.UnauthorisedException();
+                throw new AccessError(ERROR_TYPE.OPERATION_FAILED);
         } finally {
             Access.pool.checkIn(conn);
         }
@@ -83,29 +84,26 @@ public class UserAccessControl {
      * @param level
      * @throws UserAccessControl.UnauthorisedException
      */
-    public static void authOperation(Class author, JSONObject obj, int level) throws UserAccessControl.UnauthorisedException {
+    public static void authOperation(Class author, String token, int level) throws AccessError {
         Connection conn = Access.pool.checkOut();
         if (level <= 0) {
             return;
         }
         try {
-            PreparedStatement pstmt;
-            pstmt = conn.prepareStatement(String.format(Persistence.GET_PRIVILEGE_AND_ID_SQL, author.getSimpleName()));
-            pstmt.setObject(1, obj.get("token"));
-            ResultSet rs = pstmt.executeQuery();
+           try (PreparedStatement pstmt = conn.prepareStatement(String.format(Persistence.GET_PRIVILEGE_AND_ID_SQL, author.getSimpleName()))){
+            pstmt.setObject(1,token);
+            try(ResultSet rs = pstmt.executeQuery()){
             rs.next();
             if (rs.getInt("level") == 999) {
                 System.out.println("An admin with id : " + rs.getInt("id") + " performed a level-based operation");
-            } else if (level > rs.getInt("level")) {
-                rs.close();
-                pstmt.close();
-                throw new UserAccessControl.UnauthorisedException();
+            } else if (level >= rs.getInt("level")) {
+                throw new AccessError(ERROR_TYPE.USER_NOT_AUTHORISED);
             }
-            rs.close();
-            pstmt.close();
+            }
+           }
 
         } catch (SQLException ex) {
-            throw new UserAccessControl.UnauthorisedException();
+                throw new AccessError(ERROR_TYPE.OPERATION_FAILED);
         } finally {
             Access.pool.checkIn(conn);
         }

@@ -47,6 +47,7 @@ public class Persistence {
 
     public static final String SEARCH_BY_PROPERTY_SQL = "SELECT * from %s WHERE %s";
     public static final String SELECT_OBJECT_USER = "SELECT user from %s where id = ?";
+    
 
     /**
      * Creates a new object and ties it to the user. Returns a success message
@@ -559,6 +560,26 @@ public class Persistence {
             fields.addAll(Arrays.asList(c.getDeclaredFields()));
         }
         return (fields.toArray(new Field[fields.size()]));
+    }
+    
+    public static JSONObject getUser(Class author,String token) throws AccessError{
+        Connection conn = Access.pool.checkOut();
+        JSONObject response = new JSONObject();
+        try (PreparedStatement pstmt = conn.prepareStatement(String.format(Persistence.GET_PRIVILEGE_AND_ID_SQL, author.getSimpleName()))){
+           
+            pstmt.setObject(1,token);
+            try(ResultSet rs = pstmt.executeQuery()){
+            rs.next();
+            response.put("id",rs.getLong("id"));
+            response.put("level",rs.getLong("level"));
+            }
+          } catch (SQLException e) {
+            System.out.println(e);
+            throw new AccessError(ERROR_TYPE.OPERATION_FAILED);
+        } finally {
+            Access.pool.checkIn(conn);
+        }
+        return response;
     }
 
     private static String buildValues(Class object, JSONObject json) {

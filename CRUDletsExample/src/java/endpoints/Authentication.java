@@ -1,6 +1,7 @@
 package endpoints;
 
 
+import com.tna.common.AccessError;
 import entities.User;
 import com.tna.endpoints.AuthenticationEndpoint;
 import com.tna.common.UserAccessControl;
@@ -21,7 +22,7 @@ import org.json.simple.JSONObject;
 public class Authentication extends AuthenticationEndpoint{
 
     @Override
-    public JSONObject login(JSONObject obj) throws UserAccessControl.UnauthorisedException {
+    public JSONObject login(JSONObject obj) throws AccessError {
         return UserAccessControl.login(User.class,obj);
     }
 
