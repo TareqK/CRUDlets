@@ -562,7 +562,7 @@ public class Persistence {
         return (fields.toArray(new Field[fields.size()]));
     }
     
-    public static JSONObject getUser(Class author,String token) throws AccessError{
+    public static JSONObject readUser(Class author,String token) throws AccessError{
         Connection conn = Access.pool.checkOut();
         JSONObject response = new JSONObject();
         try (PreparedStatement pstmt = conn.prepareStatement(String.format(Persistence.GET_PRIVILEGE_AND_ID_SQL, author.getSimpleName()))){
