@@ -187,6 +187,8 @@ public abstract class AuthorisedEndpoint extends HttpServlet {
                 return HttpServletResponse.SC_NOT_IMPLEMENTED;
             case ENTITY_UNAVAILABLE :
                 return HttpServletResponse.SC_CONFLICT;
+            case USER_NOT_ALLOWED :
+                return HttpServletResponse.SC_ACCEPTED;
             default:
                 return HttpServletResponse.SC_BAD_REQUEST;
         }

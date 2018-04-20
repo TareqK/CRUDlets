@@ -16,7 +16,8 @@ public class AccessError extends Throwable {
     USER_NOT_AUTHORISED,
     USER_NOT_AUTHENTICATED,
     OPERATION_FAILED,
-    ENTITY_UNAVAILABLE;
+    ENTITY_UNAVAILABLE,
+    USER_NOT_ALLOWED;
     
     }
     public ERROR_TYPE error ;
