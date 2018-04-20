@@ -93,7 +93,10 @@ public class UserAccessControl {
            try (PreparedStatement pstmt = conn.prepareStatement(String.format(Persistence.GET_PRIVILEGE_AND_ID_SQL, author.getSimpleName()))){
             pstmt.setObject(1,token);
             try(ResultSet rs = pstmt.executeQuery()){
-            rs.next();
+            if(!rs.next()){
+                throw new AccessError(ERROR_TYPE.USER_NOT_AUTHENTICATED);
+            }
+         
             if (rs.getInt("level") == 999) {
                 System.out.println("An admin with id : " + rs.getInt("id") + " performed a level-based operation");
             } else if (level >= rs.getInt("level")) {
