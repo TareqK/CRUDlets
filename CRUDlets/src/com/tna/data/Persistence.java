@@ -48,6 +48,7 @@ public class Persistence {
     public static final String SEARCH_BY_PROPERTY_SQL = "SELECT * from %s WHERE %s";
     public static final String SELECT_OBJECT_USER = "SELECT user from %s where id = ?";
     
+    public static final String CREATE_NEW_USER_SQL = "INSERT INTO %s (userName,password,level) VALUES (?,?,?)";
 
     /**
      * Creates a new object and ties it to the user. Returns a success message

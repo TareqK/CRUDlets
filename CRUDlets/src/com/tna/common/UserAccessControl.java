@@ -8,12 +8,14 @@ package com.tna.common;
 import com.tna.common.AccessError.ERROR_TYPE;
 import com.tna.data.Access;
 import com.tna.data.Persistence;
+import static com.tna.data.Persistence.CREATE_NEW_USER_SQL;
 import static com.tna.data.Persistence.GET_PRIVILEGE_AND_ID_SQL;
 import static com.tna.data.Persistence.SELECT_OBJECT_USER;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.UUID;
 import org.json.simple.JSONObject;
 
@@ -22,16 +24,6 @@ import org.json.simple.JSONObject;
  * @author tareq
  */
 public class UserAccessControl {
-
-    /**
-     * Thrown when an unauthorised operation is attempted.
-     */
-    public static class UnauthorisedException extends Exception {
-
-        public UnauthorisedException() {
-            System.out.println("Anuthroised Request");
-        }
-    }
 
     /**
      * Performs a login operation with a user's username and password, and
@@ -183,5 +175,37 @@ public class UserAccessControl {
         } finally {
             Access.pool.checkIn(conn);
         }
+    }
+    
+    public static long createNewUser(Class author, JSONObject json, int level) throws AccessError{
+        
+        Connection conn = Access.pool.checkOut();
+        long userId = -1;
+        try {
+            String authorName = author.getSimpleName();
+
+            try (PreparedStatement pstmt = conn.prepareStatement(String.format(CREATE_NEW_USER_SQL, authorName),Statement.RETURN_GENERATED_KEYS)) {
+                pstmt.setObject(1, json.get("userName"));
+                pstmt.setObject(2, json.get("password"));
+                pstmt.setObject(3, level);
+                pstmt.execute();
+                try (ResultSet rs = pstmt.getGeneratedKeys()) {
+                    if (!rs.next()) {
+                        throw new AccessError(AccessError.ERROR_TYPE.OPERATION_FAILED);
+                    }
+                    userId = rs.getLong(1);
+                    
+                }
+
+            }
+        } catch (SQLException ex) {
+            throw new AccessError(AccessError.ERROR_TYPE.OPERATION_FAILED);
+
+        } finally {
+            
+            Access.pool.checkIn(conn);
+            
+        }
+        return userId;
     }
 }

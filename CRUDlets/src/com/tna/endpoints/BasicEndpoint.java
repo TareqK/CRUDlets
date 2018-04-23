@@ -62,7 +62,7 @@ public abstract class BasicEndpoint extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+        throws ServletException, IOException {
         response.setContentType("application/json;charset=UTF-8");
         JSONObject obj = null;
         try {
