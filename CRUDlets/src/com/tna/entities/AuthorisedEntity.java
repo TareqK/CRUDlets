@@ -9,8 +9,8 @@ package com.tna.entities;
  *
  * @author tareq
  */
-public abstract class AuthorisedEntity extends BasicEntity{
-    
+public abstract class AuthorisedEntity extends BasicEntity {
+
     public long user;
-    
+
 }

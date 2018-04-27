@@ -20,32 +20,39 @@ import java.util.Set;
  */
 public abstract class ObjectPool<T> {
 
-    private Set<T> available = new HashSet<>();
+    @SuppressWarnings("FieldMayBeFinal")
+    private Set<T> available;
     
-    private Set<T> inUse = new HashSet<>();
+    @SuppressWarnings("FieldMayBeFinal")
+    private Set<T> inUse;
+
+    public ObjectPool() {
+        this.inUse = new HashSet<>();
+        this.available = new HashSet<>();
+    }
 
     /**
-     *
+     * Create a new instance of the object we want to pool.
      * @return returns a new instance of the object we want to pool.
      */
     protected abstract T create();
 
     /**
      * destroys an instance of the object we are pooling.
-     * @param instance
+     * @param instance the instance we want to destroy
      */
     protected abstract void destroy(T instance);
 
     /**
      * validate an instance of the object we are pooling.
-     * @param instance
+     * @param instance the instance we want to validate
      * @return returns true if the instance is valid for use, returns false otherwise.
      */
     protected abstract boolean isValid(T instance);
 
     /**
-     *
-     * @return gets an instance of the object from the pool.
+     * Gets an instance of the pooled object from the pool.
+     * @return an instance of the pooled object.
      */
     public synchronized T checkOut() {
         if (available.isEmpty()) {
@@ -65,7 +72,7 @@ public abstract class ObjectPool<T> {
 
     /**
      * returns an instance of the object to the pool.
-     * @param instance
+     * @param instance the instance to be returned to the pool
      */
     public synchronized void checkIn(T instance) {
         inUse.remove(instance);
@@ -79,18 +86,22 @@ public abstract class ObjectPool<T> {
 
     /**
      * Initializes a number of objects for the pool.
-     * @param numberOfInstances
+     * @param numberOfInstances The number of object instances to start the pool with.
      */
     public void initialize(int numberOfInstances) {
         ArrayList<T> instances = new ArrayList();
         for (int i = 0; i < numberOfInstances; i++) {
             instances.add(this.checkOut());
         }
-        for (T instance : instances) {
+        instances.forEach((instance) -> {
             checkIn(instance);
-        }
+        });
     }
 
+    /**
+     * Return a string format about the status of the object
+     * @return a string of the total size of the pool and how many objects are in use.
+     */
     @Override
     public synchronized String toString() {
         return String.format("Pool available=%d inUse=%d", available.size(), inUse.size());

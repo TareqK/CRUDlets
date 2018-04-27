@@ -62,9 +62,9 @@ public abstract class BasicEndpoint extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
+            throws ServletException, IOException {
         response.setContentType("application/json;charset=UTF-8");
-        JSONObject obj = null;
+        JSONObject obj;
         try {
             obj = doCreate(Parser.parseRequest(request));
         } catch (Parser.RequestParseException ex) {
@@ -92,7 +92,7 @@ public abstract class BasicEndpoint extends HttpServlet {
     protected void doPut(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("application/json;charset=UTF-8");
-        JSONObject obj = null;
+        JSONObject obj;
         try {
             Integer resource = Parser.parseURL(request);
             if (resource == null) {
@@ -108,7 +108,6 @@ public abstract class BasicEndpoint extends HttpServlet {
         try (PrintWriter printWriter = response.getWriter()) {
             if (obj == null) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);//send a bad request
-                return;
             } else {
                 printWriter.print(obj);
             }
@@ -139,57 +138,48 @@ public abstract class BasicEndpoint extends HttpServlet {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);//send a bad request
             return;
         }
-       try (PrintWriter printWriter = response.getWriter()) {
-             if (obj == null) {
+        try (PrintWriter printWriter = response.getWriter()) {
+            if (obj == null) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);//send a bad request
-                return;
             } else {
                 printWriter.print(obj);
             }
         }
     }
 
-    @Override
-    public String getServletInfo() {
-        return null;
-    }// </editor-fold>
 
     /**
-     *
-     * @return returns a list of all entries
+     * Lists all the objects associated with this endpoint.
+     * @return a JSON formatted list of objects.
      */
     public abstract JSONObject doList();
 
     /**
-     *
-     * @param obj
-     * @return Creates a new entry in the data source. Should return a success
-     * code in JSON format.
+     * Creates an object associated with this endpoint.
+     * @param data The JSON formatted object data.
+     * @return a JSON formatted success message.
      */
-    public abstract JSONObject doCreate(JSONObject obj);
+    public abstract JSONObject doCreate(JSONObject data);
 
     /**
-     *
-     * @param obj
-     * @param resource
-     * @return Updates an entity in the data source. Should return a success
-     * code in JSON format.
+     * Update an object associated with this endpoint.
+     * @param data The JSON formatted object data.
+     * @param resource The id of the object.
+     * @return a JSON formatted succecss message.
      */
-    public abstract JSONObject doUpdate(JSONObject obj, int resource);
+    public abstract JSONObject doUpdate(JSONObject data, int resource);
 
     /**
-     *
-     * @param resource
-     * @return Reads/Fetches an entity from the data source. Should return the
-     * entity details in JSON format.
+     * Read an object associated with this endpoint.
+     * @param resource The id of the object.
+     * @return a JSON formatted object.
      */
     public abstract JSONObject doRead(int resource);
 
     /**
-     *
-     * @param resource
-     * @return Deletes an entity from the data source. Should return a success
-     * code in JSON format.
+     * Deletes an object associated with this endpoint.
+     * @param resource The id of the object.
+     * @return a JSON formatted success message.
      */
     public abstract JSONObject doDelete(int resource);
 

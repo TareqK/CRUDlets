@@ -22,6 +22,10 @@ public class AccessError extends Throwable {
     }
     public ERROR_TYPE error ;
     
+    /**
+     * Throw a new access error.
+     * @param type The Type of the error to be thrown
+     */
     public AccessError(ERROR_TYPE type){
         this.error=type;
     }

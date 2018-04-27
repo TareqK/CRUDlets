@@ -7,7 +7,6 @@ package com.tna.endpoints;
 
 import com.tna.common.AccessError;
 import com.tna.common.AccessError.ERROR_TYPE;
-import com.tna.common.UserAccessControl;
 import com.tna.utils.Parser;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -185,9 +184,9 @@ public abstract class AuthorisedEndpoint extends HttpServlet {
                 return HttpServletResponse.SC_FORBIDDEN;
             case OPERATION_FAILED:
                 return HttpServletResponse.SC_NOT_IMPLEMENTED;
-            case ENTITY_UNAVAILABLE :
+            case ENTITY_UNAVAILABLE:
                 return HttpServletResponse.SC_CONFLICT;
-            case USER_NOT_ALLOWED :
+            case USER_NOT_ALLOWED:
                 return HttpServletResponse.SC_ACCEPTED;
             default:
                 return HttpServletResponse.SC_BAD_REQUEST;
@@ -195,50 +194,48 @@ public abstract class AuthorisedEndpoint extends HttpServlet {
     }
 
     /**
-     *
-     * @param token
-     * @return returns a list of all entities
-     * @throws com.tna.common.AccessError
+     * List objects associated with this endpoint.
+     * @param token The session token.
+     * @return a JSON formatted list of objects.
+     * @throws AccessError
      */
     public abstract JSONObject doList(String token) throws AccessError;
 
     /**
-     *
-     * @param json
-     * @return Creates a new entry in the data source. Should return a success
-     * code in JSON format.
-     * @throws com.tna.common.Authorisation.UnauthorisedException
+     * Creates an object associated with this endpoint.
+     * @param data The JSON formatted data of the object we want to create.
+     * @param token The session token of the user.
+     * @return a JSON formatted success message.
+     * @throws AccessError
      */
-    public abstract JSONObject doCreate(JSONObject json, String token) throws AccessError;
+    public abstract JSONObject doCreate(JSONObject data, String token) throws AccessError;
 
     /**
-     *
-     * @param json
-     * @param resource
-     * @return Updates an entity in the data source. Should return a success
-     * code in JSON format.
-     * @throws com.tna.common.Authorisation.UnauthorisedException
+     * Updates an object associated with this endpoint.
+     * @param data The JSON formatted update data.
+     * @param resource The id of the object we want to update.
+     * @param token The session token of the user.
+     * @return a JSON formatted success message.
+     * @throws AccessError
      */
-    public abstract JSONObject doUpdate(JSONObject json, int resource, String token) throws AccessError;
+    public abstract JSONObject doUpdate(JSONObject data, long resource, String token) throws AccessError;
 
     /**
-     *
-     * @param resource
-     * @param json
-     * @return Reads/Fetches an entity from the data source. Should return the
-     * entity details in JSON format.
-     * @throws com.tna.common.Authorisation.UnauthorisedException
+     * Reads an object associated with this endpoint.
+     * @param resource The id of the object we want to read.
+     * @param token The session token of the user.
+     * @return a JSON formatted object.
+     * @throws AccessError
      */
-    public abstract JSONObject doRead(int resource, String token) throws AccessError;
+    public abstract JSONObject doRead(long resource, String token) throws AccessError;
 
     /**
-     *
-     * @param resource
-     * @param json
-     * @return Deletes an entity from the data source. Should return a success
-     * code in JSON format.
-     * @throws com.tna.common.Authorisation.UnauthorisedException
+     * Deletes an object associated with this endpoint.
+     * @param resource The id of the object we want to delete.
+     * @param token The session token of the user.
+     * @return a JSON formatted success message.
+     * @throws AccessError
      */
-    public abstract JSONObject doDelete(int resource, String token) throws AccessError;
+    public abstract JSONObject doDelete(long resource, String token) throws AccessError;
 
 }

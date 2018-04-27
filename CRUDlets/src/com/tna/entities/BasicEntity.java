@@ -5,15 +5,13 @@
  */
 package com.tna.entities;
 
-import org.json.simple.JSONObject;
-
 /**
  *
  * @author tareq
  *
  */
+public abstract class BasicEntity {
 
-public abstract class BasicEntity{
     public long id;
-   
+
 }

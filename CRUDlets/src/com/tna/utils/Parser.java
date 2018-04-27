@@ -18,9 +18,9 @@ import org.json.simple.parser.ParseException;
 public class Parser {
 
     /**
-     * Parses an HttpServletRequest's Data to a JSONObject.
-     * @param request
-     * @return returns the HTTP Request as a JSONObject.
+     * Parses the data in a request into JSON data.
+     * @param request The HTTPServletRequest to be parsed.
+     * @return JSON data of the request.
      * @throws IOException
      * @throws RequestParseException
      */
@@ -37,21 +37,18 @@ public class Parser {
         return array;
     }
 
-    /**
-     * Thrown when there is something wrong with the request.
-     */ 
+
     public static class RequestParseException extends Exception {
 
         public RequestParseException() {
             System.out.println("Wrong Request");
         }
     }
-    
+
     /**
-     * Parses and extracts an HttpServletRequest's URL's resource.
-     * @param request
-     * @return returns the path/resource if the URL is correct , or null if the URL has no path
-     * , throws a URLParseException otherwise.
+     * Parses the URL in a request into a resource.
+     * @param request The HTTPServletRequest to be parsed.
+     * @return The resource Id
      * @throws URLParseException
      */
     public static Integer parseURL(HttpServletRequest request) throws URLParseException {//URI parser
@@ -68,9 +65,7 @@ public class Parser {
         }
     }
 
-    /**
-     * Thrown when there is something wrong with the URL.
-     */
+
     public static class URLParseException extends Exception {
 
         public URLParseException() {

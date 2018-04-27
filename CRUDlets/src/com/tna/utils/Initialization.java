@@ -12,18 +12,25 @@ import javax.servlet.ServletContextListener;
  *
  * @author tareq
  */
-public abstract class Initialization implements  ServletContextListener {
-    
-     @Override
-        public void contextInitialized(ServletContextEvent sce) {
-           onInit();
-        }
+public abstract class Initialization implements ServletContextListener {
 
-        @Override
-        public void contextDestroyed(ServletContextEvent sce) {
-           onDestroy();
-        }
-    
-        public abstract void onInit();
-        public abstract void onDestroy();
+    @Override
+    public void contextInitialized(ServletContextEvent sce) {
+        onInit();
+    }
+
+    @Override
+    public void contextDestroyed(ServletContextEvent sce) {
+        onDestroy();
+    }
+
+    /**
+     * A function ran on servlet initialization.
+     */
+    public abstract void onInit();
+
+    /**
+     * A function run on servlet destruction.
+     */
+    public abstract void onDestroy();
 }
