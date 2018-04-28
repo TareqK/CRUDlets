@@ -15,6 +15,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Set;
@@ -39,8 +40,10 @@ public class Persistence {
     private static final String UPDATE_USER_OBJECT_SQL = "UPDATE %s SET %s where id = ? AND user = (SELECT id FROM %s WHERE token = ? )";
     private static final String DELETE_USER_OBJECT_SQL = "DELETE FROM %s WHERE id = ? and user = (SELECT id FROM %s WHERE token = ? )";
 
-    private static final String SEARCH_BY_PROPERTIES_SQL = "SELECT * from %s WHERE %s";
+    private static final String SEARCH_BY_PROPERTIES_SQL = "SELECT * FROM %s WHERE %s";
     private static final String UPDATE_BY_PROPERTIES_SQL = "UPDATE %s SET %s WHERE %s";
+    
+    private static final String LIST_NEWER_THAN_SQL = "SELECT * FROM %s Where timeStamp >= ?";
 
     /**
      * Creates a new object and assigns it to a user.
@@ -638,4 +641,40 @@ public class Persistence {
         return values.toString();
     }
 
+    public static JSONObject listNewerThan(Class object, Timestamp timeStamp) throws AccessError{
+        JSONObject result = new JSONObject();
+        Connection conn = Access.pool.checkOut();
+
+        try {
+            String className = object.getSimpleName();
+            try (PreparedStatement pstmt = conn.prepareStatement((String.format(LIST_NEWER_THAN_SQL, className)), Statement.RETURN_GENERATED_KEYS)) {
+                pstmt.setTimestamp(1, timeStamp);
+                try (ResultSet rs = pstmt.executeQuery()) {
+                    Field[] fields = getAllFields(object);
+                    int i = 0;
+                    if (rs.next() == false) {
+                        throw new AccessError(ERROR_TYPE.ENTITY_NOT_FOUND);
+                    }
+                    do {
+                        JSONObject obj = new JSONObject();
+                        for (Field field : fields) {
+                            try {
+                                obj.put(field.getName(), rs.getObject(field.getName()));
+                            } catch (IllegalArgumentException ex) {
+                            }
+                        }
+                        result.put(i, obj);
+                        i++;
+                    } while (rs.next());
+
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+            throw new AccessError(ERROR_TYPE.OPERATION_FAILED);
+        } finally {
+            Access.pool.checkIn(conn);
+        }
+        return result;
+    }
 }

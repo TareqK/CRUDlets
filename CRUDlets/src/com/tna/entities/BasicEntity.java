@@ -5,6 +5,8 @@
  */
 package com.tna.entities;
 
+import java.sql.Timestamp;
+
 /**
  *
  * @author tareq
@@ -13,5 +15,5 @@ package com.tna.entities;
 public abstract class BasicEntity {
 
     public long id;
-
+    Timestamp timeStamp;
 }
