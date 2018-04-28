@@ -13,17 +13,21 @@ import java.util.HashMap;
  * @author tareq
  * @param <O> The Type of object we want to cache.
  */
-public class ObjectCache<O>{
+public class ObjectCache<Key,Value>{
 
-    private HashMap<Object,O> cache;
+    private HashMap<Key,Value> cache;
     private Timestamp timeStamp;
     
-    public synchronized void cache(Object key, O cached){
-        cache.put(key,cached);
+    public ObjectCache(){
+        this.cache = new HashMap();
+        this.timeStamp = new Timestamp(0);
+    }
+    public synchronized void cache(Key key, Value value){
+        this.cache.put(key,value);
     }
     
-    public synchronized O retreive(Object key){
-       return (O)cache.get(key);
+    public synchronized Value retreive(Key key){
+       return (Value)cache.get(key);
     }
     
     public synchronized Timestamp getTimeStamp(){

@@ -15,5 +15,4 @@ import java.sql.Timestamp;
 public abstract class BasicEntity {
 
     public long id;
-    Timestamp timeStamp;
 }
