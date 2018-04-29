@@ -5,6 +5,7 @@
  */
 package com.tna.utils;
 
+import java.util.concurrent.locks.ReentrantLock;
 import javax.websocket.Session;
 
 /**
@@ -12,14 +13,6 @@ import javax.websocket.Session;
  * @author tareq
  */
 public class UserSession {
-
-    public boolean isLock() {
-        return lock;
-    }
-
-    public void setLock(boolean lock) {
-        this.lock = lock;
-    }
 
     public String getToken() {
         return token;
@@ -44,7 +37,7 @@ public class UserSession {
     public void setPrivilege(long privilege) {
         this.privilege = privilege;
     }
-    boolean lock;
+    public ReentrantLock lock;
     String token;
     long id;
     long privilege;
@@ -55,7 +48,7 @@ public class UserSession {
         this.id = id;
         this.privilege = privilege;
         this.userSession = userSession;
-        this.lock = false;
+        lock = new ReentrantLock();
     }
 
     public Session getUserSession() {

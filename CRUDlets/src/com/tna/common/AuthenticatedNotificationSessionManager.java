@@ -24,12 +24,15 @@ public class AuthenticatedNotificationSessionManager {
 
     private static AuthenticatedNotificationSessionManager getInstance() {
         if (sessionManager == null) {
+            synchronized(AuthenticatedNotificationSessionManager.class){
+                if(sessionManager == null){
             sessionManager = new AuthenticatedNotificationSessionManager();
-        }
-        return sessionManager;
+            }
+        }    
 
     }
-
+         return sessionManager;
+}
     private AuthenticatedNotificationSessionManager() {
         userSessions = new HashMap();
     }
@@ -38,30 +41,12 @@ public class AuthenticatedNotificationSessionManager {
         return AuthenticatedNotificationSessionManager.getInstance().userSessions.get(session);
     }
     
-    public synchronized static void checkout(Session session) {
-        UserSession userSession = AuthenticatedNotificationSessionManager.getInstance().userSessions.get(session);
-
-        if (userSession != null) {
-            while (userSession.isLock() == true) {
-                try {
-                    Thread.sleep(5);
-                } catch (InterruptedException ex) {
-                    return;
-                }
-            }
-            userSession.setLock(true);
-            AuthenticatedNotificationSessionManager.getInstance().userSessions.replace(session, userSession);
-        }
+    public static void checkout(Session session) {
+    AuthenticatedNotificationSessionManager.getInstance().userSessions.get(session).lock.lock();      
     }
 
-    public synchronized static void checkin(Session session) {
-        UserSession userSession = AuthenticatedNotificationSessionManager.getInstance().userSessions.get(session);
-
-        if (userSession != null) {
-            userSession.setLock(false);
-            AuthenticatedNotificationSessionManager.getInstance().userSessions.replace(session, userSession);
-        }
-
+    public static void checkin(Session session) {
+        AuthenticatedNotificationSessionManager.getInstance().userSessions.get(session).lock.unlock();
     }
 
     public synchronized static Set sessionsSet() {
@@ -69,17 +54,17 @@ public class AuthenticatedNotificationSessionManager {
     }
     
 
-    public static void addUserSession(UserSession userSession, Session session) {
+    public synchronized static void addUserSession(UserSession userSession, Session session) {
 
         AuthenticatedNotificationSessionManager.getInstance().userSessions.put(session, userSession);
 
     }
 
-    public static void removeUserSession(UserSession session) {
-        AuthenticatedNotificationSessionManager.getInstance().userSessions.remove(session);
+    public synchronized static void removeUserSession(UserSession session) {
+        AuthenticatedNotificationSessionManager.getInstance().userSessions.remove(session.getUserSession());
     }
 
-    public static void closeAllSessions() {
+    public synchronized static void closeAllSessions() {
         Set<Session> allSessions = sessionsSet();
         for (Session session : allSessions) {
             UserSession userSession = AuthenticatedNotificationSessionManager.getInstance().userSessions.get(session);
