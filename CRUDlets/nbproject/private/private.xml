@@ -5,6 +5,8 @@
         <group>
             <file>file:/home/tareq/Code/CRUDlets/CRUDlets/src/com/tna/common/ObjectCache.java</file>
             <file>file:/home/tareq/Code/CRUDlets/CRUDlets/src/com/tna/endpoints/BasicNotificationsEndpoint.java</file>
+            <file>file:/home/tareq/Code/CRUDlets/CRUDlets/src/com/tna/data/ConnectionPool.java</file>
+            <file>file:/home/tareq/Code/CRUDlets/CRUDlets/src/com/tna/data/Access.java</file>
             <file>file:/home/tareq/Code/CRUDlets/CRUDlets/src/com/tna/utils/UserSession.java</file>
             <file>file:/home/tareq/Code/CRUDlets/CRUDlets/src/com/tna/common/AuthenticatedNotificationSessionManager.java</file>
             <file>file:/home/tareq/Code/CRUDlets/CRUDlets/src/com/tna/common/BasicNotificationSessionManager.java</file>

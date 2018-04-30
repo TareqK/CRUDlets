@@ -15,26 +15,22 @@ import org.json.simple.JSONObject;
 public abstract class AuthenticationEndpoint extends BasicEndpoint {
 
     @Override
-    public JSONObject doList() {
+    public JSONObject doList() throws AccessError {
         return null;
     }
 
     @Override
-    public JSONObject doCreate(JSONObject json) {
-        try {
+    public JSONObject doCreate(JSONObject json) throws AccessError {
             return login(json);
-        } catch (AccessError e) {
-            return null;
-        }
     }
 
     @Override
-    public JSONObject doUpdate(JSONObject obj, int resource) {
+    public JSONObject doUpdate(JSONObject obj, int resource) throws AccessError {
         return null;
     }
 
     @Override
-    public JSONObject doRead(int resource) {
+    public JSONObject doRead(int resource) throws AccessError{
         return null;
     }
 

@@ -43,7 +43,7 @@ public class UserAccessControl {
             try (PreparedStatement pstmt = conn.prepareStatement(String.format(GET_PASSWORD_SQL, author.getSimpleName()))) {
                 pstmt.setObject(1, credentials.get("userName"));
                 try (ResultSet rs = pstmt.executeQuery()) {
-                    rs.next();
+                    if(rs.next()){
                     if (!rs.getString("password").equals(credentials.get("password").toString())) {
                         throw new AccessError(ERROR_TYPE.USER_NOT_AUTHORISED);
                     }
@@ -55,6 +55,9 @@ public class UserAccessControl {
                         pstmt2.execute();
                         result.put("token", token);
                         result.put("id", id);
+                    }
+                }else{
+                        throw new AccessError(ERROR_TYPE.USER_NOT_AUTHENTICATED);
                     }
                 }
             }
