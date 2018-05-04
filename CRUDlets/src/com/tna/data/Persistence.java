@@ -42,7 +42,9 @@ public class Persistence {
 
     private static final String SEARCH_BY_PROPERTIES_SQL = "SELECT * FROM %s WHERE %s";
     private static final String UPDATE_BY_PROPERTIES_SQL = "UPDATE %s SET %s WHERE %s";
-    
+
+    private static final String DELETE_BY_PROPERTIES_SQL = "DELETE FROM %s WHERE %s";
+
     private static final String LIST_NEWER_THAN_SQL = "SELECT * FROM %s Where timeStamp >= ?";
 
     /**
@@ -404,6 +406,59 @@ public class Persistence {
         return result;
 
     }
+    
+    public static JSONObject searchByProperties(Class object, JSONObject query) {
+        JSONObject result = new JSONObject();
+        Connection conn = Access.pool.checkOut();
+
+        try {
+            StringBuilder valuesString = new StringBuilder();
+            Set keys = query.keySet();
+            int i = 0;
+            int length = keys.size();
+            for (Object key : keys) {
+                try {
+                    object.getDeclaredField(key.toString());
+                    valuesString.append(key.toString());
+                    valuesString.append(" = ?");
+                    if (i < length - 1) {
+                        valuesString.append(" or ");
+                    }
+                    i++;
+                } catch (NoSuchFieldException | SecurityException ex) {
+                    throw new SQLException();
+                }
+            }
+            String className = object.getSimpleName();
+            try (PreparedStatement pstmt = conn.prepareStatement((String.format(SEARCH_BY_PROPERTIES_SQL, className, valuesString.toString())), Statement.RETURN_GENERATED_KEYS)) {
+                i = 1;
+                for (Object key : keys) {
+                    pstmt.setObject(i, query.get(key));
+                    i++;
+                }
+                try (ResultSet rs = pstmt.executeQuery()) {
+                    Field[] fields = getAllFields(object);
+                    while (rs.next()) {
+                        JSONObject obj = new JSONObject();
+                        for (Field field : fields) {
+                            try {
+                                obj.put(field.getName(), rs.getObject(field.getName()));
+                            } catch (IllegalArgumentException ex) {
+                            }
+                        }
+                        result.put(rs.getObject("id"), obj);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+            result = null;
+        } finally {
+            Access.pool.checkIn(conn);
+        }
+        return result;
+
+    }
 
     /**
      * Creates a new object.
@@ -641,7 +696,7 @@ public class Persistence {
         return values.toString();
     }
 
-    public static JSONObject listNewerThan(Class object, Timestamp timeStamp) throws AccessError{
+    public static JSONObject listNewerThan(Class object, Timestamp timeStamp) throws AccessError {
         JSONObject result = new JSONObject();
         Connection conn = Access.pool.checkOut();
 
@@ -676,5 +731,47 @@ public class Persistence {
             Access.pool.checkIn(conn);
         }
         return result;
+    }
+
+    public static JSONObject deleteByProperties(Class object, JSONObject query) {
+        JSONObject result = new JSONObject();
+        Connection conn = Access.pool.checkOut();
+
+        try {
+            StringBuilder valuesString = new StringBuilder();
+            Set keys = query.keySet();
+            int i = 0;
+            int length = keys.size();
+            for (Object key : keys) {
+                try {
+                    object.getDeclaredField(key.toString());
+                    valuesString.append(key.toString());
+                    valuesString.append(" = ?");
+                    if (i < length - 1) {
+                        valuesString.append(" and ");
+                    }
+                    i++;
+                } catch (NoSuchFieldException | SecurityException ex) {
+                    throw new SQLException();
+                }
+            }
+            String className = object.getSimpleName();
+            try (PreparedStatement pstmt = conn.prepareStatement((String.format(DELETE_BY_PROPERTIES_SQL, className, valuesString.toString())), Statement.RETURN_GENERATED_KEYS)) {
+                i = 1;
+                for (Object key : keys) {
+                    pstmt.setObject(i, query.get(key));
+                    i++;
+                }
+                pstmt.executeUpdate();
+                result = JSON.successResponse();
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+            result = null;
+        } finally {
+            Access.pool.checkIn(conn);
+        }
+        return result;
+
     }
 }
