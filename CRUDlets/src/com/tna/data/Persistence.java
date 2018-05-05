@@ -422,34 +422,46 @@ public class Persistence {
             if (orQuery != null) {
                 orQueryKeys = orQuery.keySet();
                 int length = orQueryKeys.size();
-                for (Object key : orQueryKeys) {
+                if (length > 0) {
+                    valuesString.append("(");
+                    for (Object key : orQueryKeys) {
+                        try {
+                            object.getDeclaredField(key.toString());
+                            valuesString.append(key.toString());
+                            valuesString.append(" = ?");
+                            if (i < length - 1) {
+                                valuesString.append(" or ");
+                            }
+                            i++;
+                        } catch (NoSuchFieldException | SecurityException ex) {
+                            throw new SQLException();
+                        }
+                    }
+                    valuesString.append(")");
+                }
+            }
+            if (andQuery != null) {
+                andQueryKeys = andQuery.keySet();
+                int length = orQueryKeys.size();
+                if (i > 0 && length > 0) {
+                    valuesString.append("AND (");
+                }
+                i = 0;
+                for (Object key : andQueryKeys) {
                     try {
                         object.getDeclaredField(key.toString());
                         valuesString.append(key.toString());
                         valuesString.append(" = ?");
                         if (i < length - 1) {
-                            valuesString.append(" or ");
+                            valuesString.append(" and ");
                         }
                         i++;
                     } catch (NoSuchFieldException | SecurityException ex) {
                         throw new SQLException();
                     }
                 }
-            }
-            if (andQuery != null) {
-                andQueryKeys = andQuery.keySet();
-                for (Object key : andQueryKeys) {
-                    try {
-                        object.getDeclaredField(key.toString());
-                        if (i > 0) {
-                            valuesString.append(" and ");
-                        }
-                        valuesString.append(key.toString());
-                        valuesString.append(" = ?");
-                        i++;
-                    } catch (NoSuchFieldException | SecurityException ex) {
-                        throw new SQLException();
-                    }
+                if (i > 0) {
+                    valuesString.append(")");
                 }
             }
             String className = object.getSimpleName();
