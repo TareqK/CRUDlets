@@ -406,35 +406,66 @@ public class Persistence {
         return result;
 
     }
-    
+
     public static JSONObject searchByProperties(Class object, JSONObject query) {
         JSONObject result = new JSONObject();
         Connection conn = Access.pool.checkOut();
 
         try {
             StringBuilder valuesString = new StringBuilder();
-            Set keys = query.keySet();
+            JSONObject orQuery = (JSONObject) query.get("or");
+            JSONObject andQuery = (JSONObject) query.get("and");
+            Set orQueryKeys = null;
+            Set andQueryKeys = null;
+
             int i = 0;
-            int length = keys.size();
-            for (Object key : keys) {
-                try {
-                    object.getDeclaredField(key.toString());
-                    valuesString.append(key.toString());
-                    valuesString.append(" = ?");
-                    if (i < length - 1) {
-                        valuesString.append(" or ");
+            if (orQuery != null) {
+                orQueryKeys = orQuery.keySet();
+                int length = orQueryKeys.size();
+                for (Object key : orQueryKeys) {
+                    try {
+                        object.getDeclaredField(key.toString());
+                        valuesString.append(key.toString());
+                        valuesString.append(" = ?");
+                        if (i < length - 1) {
+                            valuesString.append(" or ");
+                        }
+                        i++;
+                    } catch (NoSuchFieldException | SecurityException ex) {
+                        throw new SQLException();
                     }
-                    i++;
-                } catch (NoSuchFieldException | SecurityException ex) {
-                    throw new SQLException();
+                }
+            }
+            if (andQuery != null) {
+                andQueryKeys = andQuery.keySet();
+                for (Object key : andQueryKeys) {
+                    try {
+                        object.getDeclaredField(key.toString());
+                        if (i > 0) {
+                            valuesString.append(" and ");
+                        }
+                        valuesString.append(key.toString());
+                        valuesString.append(" = ?");
+                        i++;
+                    } catch (NoSuchFieldException | SecurityException ex) {
+                        throw new SQLException();
+                    }
                 }
             }
             String className = object.getSimpleName();
             try (PreparedStatement pstmt = conn.prepareStatement((String.format(SEARCH_BY_PROPERTIES_SQL, className, valuesString.toString())), Statement.RETURN_GENERATED_KEYS)) {
                 i = 1;
-                for (Object key : keys) {
-                    pstmt.setObject(i, query.get(key));
-                    i++;
+                if (orQuery != null) {
+                    for (Object key : orQueryKeys) {
+                        pstmt.setObject(i, orQuery.get(key));
+                        i++;
+                    }
+                }
+                if (andQuery != null) {
+                    for (Object key : andQueryKeys) {
+                        pstmt.setObject(i, andQuery.get(key));
+                        i++;
+                    }
                 }
                 try (ResultSet rs = pstmt.executeQuery()) {
                     Field[] fields = getAllFields(object);
