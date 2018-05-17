@@ -30,6 +30,7 @@ public class UserAccessControl {
 
     /**
      * Logs in a user and gives him a session token.
+     *
      * @param author the user class to authenticate against.
      * @param credentials the credentials to check.
      * @return returns the token and user id of the user.
@@ -43,20 +44,20 @@ public class UserAccessControl {
             try (PreparedStatement pstmt = conn.prepareStatement(String.format(GET_PASSWORD_SQL, author.getSimpleName()))) {
                 pstmt.setObject(1, credentials.get("userName"));
                 try (ResultSet rs = pstmt.executeQuery()) {
-                    if(rs.next()){
-                    if (!rs.getString("password").equals(credentials.get("password").toString())) {
-                        throw new AccessError(ERROR_TYPE.USER_NOT_AUTHORISED);
-                    }
-                    try (PreparedStatement pstmt2 = conn.prepareStatement(String.format(SET_TOKEN_SQL, author.getSimpleName()))) {
-                        String token = UUID.randomUUID().toString();
-                        long id = rs.getInt("id");
-                        pstmt2.setString(1, token);
-                        pstmt2.setLong(2, id);
-                        pstmt2.execute();
-                        result.put("token", token);
-                        result.put("id", id);
-                    }
-                }else{
+                    if (rs.next()) {
+                        if (!rs.getString("password").equals(credentials.get("password").toString())) {
+                            throw new AccessError(ERROR_TYPE.USER_NOT_AUTHORISED);
+                        }
+                        try (PreparedStatement pstmt2 = conn.prepareStatement(String.format(SET_TOKEN_SQL, author.getSimpleName()))) {
+                            String token = UUID.randomUUID().toString();
+                            long id = rs.getInt("id");
+                            pstmt2.setString(1, token);
+                            pstmt2.setLong(2, id);
+                            pstmt2.execute();
+                            result.put("token", token);
+                            result.put("id", id);
+                        }
+                    } else {
                         throw new AccessError(ERROR_TYPE.USER_NOT_AUTHENTICATED);
                     }
                 }
@@ -71,6 +72,7 @@ public class UserAccessControl {
 
     /**
      * Authorises an operation on the system.
+     *
      * @param author the class to authorise against.
      * @param token the session token of the user.
      * @param level the user level required for this operation.
@@ -78,22 +80,17 @@ public class UserAccessControl {
      */
     public static void authOperation(Class author, String token, int level) throws AccessError {
         Connection conn = Access.pool.checkOut();
-        if (level <= 0) {
-            return;
-        }
-        try {
-            try (PreparedStatement pstmt = conn.prepareStatement(String.format(GET_PRIVILEGE_AND_ID_SQL, author.getSimpleName()))) {
-                pstmt.setObject(1, token);
-                try (ResultSet rs = pstmt.executeQuery()) {
-                    if (!rs.next()) {
-                        throw new AccessError(ERROR_TYPE.USER_NOT_AUTHENTICATED);
-                    }
-
-                    if (rs.getInt("level") == 999) {
-                        System.out.println("An admin with id : " + rs.getInt("id") + " performed a level-based operation");
-                    } else if (level >= rs.getInt("level")) {
-                        throw new AccessError(ERROR_TYPE.USER_NOT_AUTHORISED);
-                    }
+        try (PreparedStatement pstmt = conn.prepareStatement(String.format(GET_PRIVILEGE_AND_ID_SQL, author.getSimpleName()))) {
+            pstmt.setObject(1, token);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (!rs.next()) {
+                    throw new AccessError(ERROR_TYPE.USER_NOT_AUTHENTICATED);
+                }
+                if (rs.getInt("level") == 999) {
+                } else if (rs.getInt("level")>=level) {
+                    return;
+                } else {
+                    throw new AccessError(ERROR_TYPE.USER_NOT_AUTHORISED);
                 }
             }
 
@@ -107,6 +104,7 @@ public class UserAccessControl {
 
     /**
      * Authorises access to an object in the database.
+     *
      * @param object The class of the object to authorised access to.
      * @param author The class of the user object to authorise against.
      * @param token The session token of the user.
@@ -152,6 +150,7 @@ public class UserAccessControl {
 
     /**
      * Fetches some user details through his session token.
+     *
      * @param author The class of the user object to check against.
      * @param token The session token.
      * @return The user id and privilege level of the user.
@@ -187,6 +186,7 @@ public class UserAccessControl {
 
     /**
      * Checks the validity of a session token.
+     *
      * @param author The class of the user object to check against.
      * @param token The session token of the user.
      * @throws AccessError if the token is invalid
@@ -197,6 +197,7 @@ public class UserAccessControl {
 
     /**
      * Creates a new user.
+     *
      * @param author The user class we are going to create a new user object of.
      * @param json The credentials and details of the user.
      * @param level The privilege level of the user.
