@@ -56,7 +56,10 @@ public class UserAccessControl {
                             pstmt2.execute();
                             result.put("token", token);
                             result.put("id", id);
+                            JSONObject userPriv = UserAccessControl.fetchUserByToken(author, token);
+                            result.put("level", userPriv.get("level"));
                         }
+
                     } else {
                         throw new AccessError(ERROR_TYPE.USER_NOT_AUTHENTICATED);
                     }
@@ -87,7 +90,7 @@ public class UserAccessControl {
                     throw new AccessError(ERROR_TYPE.USER_NOT_AUTHENTICATED);
                 }
                 if (rs.getInt("level") == 999) {
-                } else if (rs.getInt("level")>=level) {
+                } else if (rs.getInt("level") >= level) {
                     return;
                 } else {
                     throw new AccessError(ERROR_TYPE.USER_NOT_AUTHORISED);
