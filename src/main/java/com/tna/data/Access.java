@@ -5,9 +5,12 @@
  */
 package com.tna.data;
 
+import com.mysql.jdbc.Driver;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -32,6 +35,7 @@ public class Access {
 
     /**
      * Sets the database host.
+     *
      * @param host the host the database is on.
      */
     public static void setHost(String host) {
@@ -40,6 +44,7 @@ public class Access {
 
     /**
      * Sets the database we want to access.
+     *
      * @param database the database to connect to.
      */
     public static void setDatabase(String database) {
@@ -48,6 +53,7 @@ public class Access {
 
     /**
      * Sets the username of the database user.
+     *
      * @param username the database user we want to use to connect with.
      */
     public static void setUsername(String username) {
@@ -56,7 +62,9 @@ public class Access {
 
     /**
      * Sets the password of the database user.
-     * @param password the password of the database user we want to use to connect with.
+     *
+     * @param password the password of the database user we want to use to
+     * connect with.
      */
     public static void setPassword(String password) {
         Access.password = password;
@@ -72,6 +80,7 @@ public class Access {
 
     /**
      * Create a new database connection.
+     *
      * @return returns a new database connection, or null on failure.
      */
     public static Connection connect() {
