@@ -6,7 +6,9 @@
 package com.tna.common;
 
 import java.sql.Timestamp;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Set;
 
 /**
  * A simple object cache based on a hashmap.
@@ -30,6 +32,10 @@ public class ObjectCache<Key,Value>{
        return (Value)cache.get(key);
     }
     
+    public synchronized void remove(Key key){
+        cache.remove(key);
+    }
+    
     public synchronized Timestamp getTimeStamp(){
         return this.timeStamp;
     }
@@ -38,6 +44,13 @@ public class ObjectCache<Key,Value>{
         this.timeStamp = timeStamp;
     }
 
+    public synchronized Collection<Value> getValues(){
+        return this.cache.values();
+    }
+    
+    public synchronized Set<Key> getKeys(){
+        return this.cache.keySet();
+    }
     
     
 }
